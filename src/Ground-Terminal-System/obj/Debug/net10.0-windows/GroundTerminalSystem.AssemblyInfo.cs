@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GroundTerminalSystem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b47e887a84f1ac8f5b92028758d01947d300d8c8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+068a4267d38a7b34305babf44f6f033bdff7920d")]
 [assembly: System.Reflection.AssemblyProductAttribute("GroundTerminalSystem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GroundTerminalSystem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
