@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+VisualStudioVersion = 18.3.11222.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AircraftTransmissionSystem", "AircraftTransmissionSystem.csproj", "{A2AA8082-EEB5-456D-9E4A-9453F3AC313D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2AA8082-EEB5-456D-9E4A-9453F3AC313D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2AA8082-EEB5-456D-9E4A-9453F3AC313D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2AA8082-EEB5-456D-9E4A-9453F3AC313D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2AA8082-EEB5-456D-9E4A-9453F3AC313D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
