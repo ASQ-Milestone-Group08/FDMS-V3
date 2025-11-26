@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "YY1vtXJKKf4=",
+  "dgSpecHash": "QQynJtGZ8jc=",
   "success": true,
   "projectFilePath": "C:\\Users\\hongq\\Desktop\\5-Semester\\Advanced Software Quality\\Assignments\\Term Project\\FDMS-Projects\\FDMS-V3\\tests\\Ground-Terminal-System-Tests\\GroundTerminalSystem.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\hongq\\.nuget\\packages\\coverlet.collector\\6.0.4\\coverlet.collector.6.0.4.nupkg.sha512",
     "C:\\Users\\hongq\\.nuget\\packages\\microsoft.applicationinsights\\2.22.0\\microsoft.applicationinsights.2.22.0.nupkg.sha512",
+    "C:\\Users\\hongq\\.nuget\\packages\\microsoft.codeanalysis.netanalyzers\\10.0.100\\microsoft.codeanalysis.netanalyzers.10.0.100.nupkg.sha512",
     "C:\\Users\\hongq\\.nuget\\packages\\microsoft.codecoverage\\17.14.0\\microsoft.codecoverage.17.14.0.nupkg.sha512",
     "C:\\Users\\hongq\\.nuget\\packages\\microsoft.net.test.sdk\\17.14.0\\microsoft.net.test.sdk.17.14.0.nupkg.sha512",
     "C:\\Users\\hongq\\.nuget\\packages\\microsoft.testing.extensions.telemetry\\1.5.3\\microsoft.testing.extensions.telemetry.1.5.3.nupkg.sha512",
