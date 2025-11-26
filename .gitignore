@@ -1,5 +1,3 @@
-# 프로젝트 루트에서 실행
-cat > .gitignore << 'EOF'
 # Visual Studio
 .vs/
 *.user
@@ -37,8 +35,29 @@ packages/
 # Rider
 .idea/
 
+# Visual Studio Code
+.vscode/
+
+# Build cache and temporary files
+*.cache
+*.v2
+*.backup.json
+*.dtbcache.v2
+*.futdcache.v2
+*.v10.bin
+*.strings.v10.bin
+*.metadata.v10.bin
+*.projects.v10.bin
+project.nuget.cache
+project.assets.json
+project.fragment.lock.json
+artifacts/
+
+# Auto-generated files
+**/obj/**/*.AssemblyInfo.cs
+**/obj/**/*.AssemblyInfoInputs.cache
+
 # Others
 *.log
 *.tmp
 TestResults/
-EOF

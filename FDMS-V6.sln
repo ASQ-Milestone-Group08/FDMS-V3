@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
 VisualStudioVersion = 18.3.11222.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
@@ -25,6 +26,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration-Tests", "Integration-Tests", "{64F25E59-3078-78AD-2A20-2A904F7AD2B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "tests\Integration-Tests\IntegrationTests.csproj", "{F9CB9BDF-9880-4EF8-B2F3-19952C39A846}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{089100B1-113F-4E66-888A-E83F3999EAFD}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,5 +119,8 @@ Global
 		{10494986-3ECE-4462-8D75-66A2943CDDDA} = {AEF8EA91-4AD6-B88D-5478-F8E55A19D5F3}
 		{64F25E59-3078-78AD-2A20-2A904F7AD2B3} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{F9CB9BDF-9880-4EF8-B2F3-19952C39A846} = {64F25E59-3078-78AD-2A20-2A904F7AD2B3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F3E9F2E-DD0D-4A97-8404-10B737D850C0}
 	EndGlobalSection
 EndGlobal
