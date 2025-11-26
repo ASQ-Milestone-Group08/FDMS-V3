@@ -61,12 +61,54 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+    # Set up JDK for SonarCloud - added by Chris
+    - name: Set up JDK 17 for SonarCloud
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: 'zulu'
 
     # Install the .NET Core workload- updated by Chris
     - name: Install .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
+
+    # Cache SonarCloud packages - added by Chris
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v4
+      with:
+        path: ~\sonar\cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    # Cache SonarCloud scanner - added by Chris
+    - name: Cache SonarCloud scanner
+      id: cache-sonar-scanner
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}\scanner
+        key: ${{ runner.os }}-sonar-scanner
+        restore-keys: ${{ runner.os }}-sonar-scanner
+
+    # Install SonarCloud scanner - added by Chris
+    - name: Install SonarCloud scanner
+      if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      shell: powershell
+      run: |
+        New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
+        dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
+
+    # Begin SonarCloud analysis - added by Chris
+    - name: Begin SonarCloud analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      shell: powershell
+      run: |
+        ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"ASQ-Milestone-Group08_FDMS-V3" /o:"asq-milestone-group08" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
     # Restore dependencies - added by Chris
     - name: Restore dependencies
@@ -82,3 +124,11 @@ jobs:
       env:
         ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
       continue-on-error: false
+
+    # End SonarCloud analysis - added by Chris
+    - name: End SonarCloud analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      shell: powershell
+      run: |
+        ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
