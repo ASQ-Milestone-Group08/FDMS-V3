@@ -7,7 +7,7 @@ namespace AircraftTransmissionSystem
     /// Supports reading comma-delimited telemetry following APPENDIX D format:
     /// Timestamp, Accel-X, Accel-Y, Accel-Z, Weight, Altitude, Pitch, Bank
     /// </summary>
-    public class FileTelemetryReader : ITelemetrySource, IDisposable
+    public class FileTelemetryReader : ITelemetrySource
     {
         private readonly string filePath;
         private StreamReader? reader;
