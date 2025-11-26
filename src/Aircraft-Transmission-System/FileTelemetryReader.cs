@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace AircraftTransmissionSystem
 {
     /// <summary>
@@ -12,10 +14,62 @@ namespace AircraftTransmissionSystem
         private bool disposed = false;
 
         /// <summary>
-        /// Function Name: FileTelemetryReader (Constructor)
-        /// Description: Initializes a new instance of the FileTelemetryReader class.
-        ///              Opens the specified telemetry file and prepares it for reading.
-        ///              Validates that the file path is not null/empty and that the file exists.
+        /// Function Name: FileTelemetryReader (Constructor - Aircraft Enum)
+        /// Description: Initializes a new instance of the FileTelemetryReader class using aircraft identifier.
+        ///              Automatically reads the telemetry file path from appsettings.json based on the aircraft type.
+        ///              This is the recommended constructor for type-safe aircraft selection.
+        /// Parameters:
+        ///   - aircraft (Aircraft): The aircraft identifier (C_FGAX, C_GEFC, or C_QWWT).
+        /// Return Type: N/A (Constructor)
+        /// Exceptions:
+        ///   - ArgumentException: Thrown when aircraft is not a valid enum value or configuration is missing.
+        ///   - FileNotFoundException: Thrown when the telemetry file or appsettings.json does not exist.
+        ///   - IOException: Thrown when the file cannot be opened.
+        /// </summary>
+        /// <param name="aircraft">The aircraft identifier.</param>
+        /// <exception cref="ArgumentException">Thrown when aircraft is not valid or configuration is missing.</exception>
+        /// <exception cref="FileNotFoundException">Thrown when the file does not exist.</exception>
+        public FileTelemetryReader(Aircraft aircraft)
+        {
+            // Read appsettings.json
+            string json = File.ReadAllText("appsettings.json");
+            using JsonDocument doc = JsonDocument.Parse(json);
+
+            // Get base path
+            string? basePath = doc.RootElement
+                .GetProperty("AircraftTelemetry")
+                .GetProperty("BasePath")
+                .GetString();
+
+            // Get file name for aircraft
+            string? fileName = doc.RootElement
+                .GetProperty("AircraftTelemetry")
+                .GetProperty("Files")
+                .GetProperty(aircraft.ToString())
+                .GetString();
+
+            if (string.IsNullOrWhiteSpace(basePath) || string.IsNullOrWhiteSpace(fileName))
+            {
+                throw new ArgumentException($"Configuration missing for aircraft {aircraft}");
+            }
+
+            // Combine base path with file name
+            this.filePath = Path.Combine(basePath, fileName);
+
+            // Check whether the file exists
+            if (!File.Exists(this.filePath))
+            {
+                throw new FileNotFoundException($"Telemetry file not found: {this.filePath}");
+            }
+
+            InitializeReader();
+        }
+
+        /// <summary>
+        /// Function Name: FileTelemetryReader (Constructor - Direct File Path)
+        /// Description: Initializes a new instance of the FileTelemetryReader class using a direct file path.
+        ///              This constructor is provided for backward compatibility and testing purposes.
+        ///              For production use, prefer the Aircraft enum constructor.
         /// Parameters:
         ///   - filePath (string): The absolute or relative path to the ASCII telemetry file to read.
         ///                        Must point to an existing file in APPENDIX D format.
