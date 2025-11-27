@@ -1,14 +1,19 @@
+using System.Net.Sockets;
+using System.Text;
+
 namespace AircraftTransmissionSystem.Network
 {
     /// <summary>
-    /// Stub implementation of network client for the Ground Terminal.
-    /// Simulates network communication for testing and development.
-    /// Will be replaced with actual TCP/UDP implementation later.
+    /// TCP/IP network client implementation for the Ground Terminal.
+    /// Handles actual socket communication for telemetry data transmission.
     /// </summary>
     public class NetworkClient : INetworkClient
     {
         private readonly string host; // Ground Terminal host address (IP Address)
         private readonly int port;    // Ground Terminal port number
+
+        private TcpClient? tcpClient;
+        private NetworkStream? networkStream;
         private bool isConnected;
 
         /// <summary>
@@ -53,24 +58,47 @@ namespace AircraftTransmissionSystem.Network
 
         /// <summary>
         /// Function Name: Connect
-        /// Description: Simulates establishing connection to the Ground Terminal.
-        ///              In the stub, this always succeeds immediately.
+        /// Description: Establishes a TCP/IP connection to the Ground Terminal.
+        ///              Creates TcpClient and NetworkStream for data transmission.
         /// Parameters: None
-        /// Return Type: bool - Always true in stub implementation
+        /// Return Type: bool - True if connection successful, false otherwise
         /// </summary>
-        /// <returns>True indicating successful connection.</returns>
+        /// <returns>True if connection was established successfully, false otherwise.</returns>
         public bool Connect()
         {
-            Console.WriteLine($"[NetworkClient] Connecting to Ground Terminal at {this.host}:{this.port}...");
-            this.isConnected = true;
-            Console.WriteLine("[NetworkClient] Connected successfully.");
-            return true;
+            try
+            {
+                Console.WriteLine($"[NetworkClient] Connecting to Ground Terminal at {this.host}:{this.port}...");
+
+                // Create and connect TCP client
+                this.tcpClient = new TcpClient();
+                this.tcpClient.Connect(this.host, this.port);
+
+                // Get network stream for reading/writing
+                this.networkStream = this.tcpClient.GetStream();
+
+                this.isConnected = true;
+                Console.WriteLine("[NetworkClient] Connected successfully.");
+                return true;
+            }
+            catch (SocketException ex)
+            {
+                Console.WriteLine($"[NetworkClient] ERROR: Connection failed - {ex.Message}");
+                this.isConnected = false;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[NetworkClient] ERROR: Unexpected error during connection - {ex.Message}");
+                this.isConnected = false;
+                return false;
+            }
         }
 
         /// <summary>
         /// Function Name: Disconnect
-        /// Description: Simulates closing the connection to the Ground Terminal.
-        ///              Releases simulated network resources.
+        /// Description: Closes the TCP/IP connection to the Ground Terminal.
+        ///              Properly disposes of NetworkStream and TcpClient resources.
         /// Parameters: None
         /// Return Type: void
         /// </summary>
@@ -79,25 +107,50 @@ namespace AircraftTransmissionSystem.Network
             if (this.isConnected)
             {
                 Console.WriteLine("[NetworkClient] Disconnecting from Ground Terminal...");
-                this.isConnected = false;
-                Console.WriteLine("[NetworkClient] Disconnected.");
+
+                try
+                {
+                    // Close network stream
+                    if (this.networkStream != null)
+                    {
+                        this.networkStream.Close();
+                        this.networkStream.Dispose();
+                        this.networkStream = null;
+                    }
+
+                    // Close TCP client
+                    if (this.tcpClient != null)
+                    {
+                        this.tcpClient.Close();
+                        this.tcpClient.Dispose();
+                        this.tcpClient = null;
+                    }
+
+                    this.isConnected = false;
+                    Console.WriteLine("[NetworkClient] Disconnected.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[NetworkClient] WARNING: Error during disconnect - {ex.Message}");
+                    this.isConnected = false;
+                }
             }
         }
 
         /// <summary>
         /// Function Name: SendData
-        /// Description: Simulates sending telemetry data to the Ground Terminal.
-        ///              In the stub, this just logs the data to console.
+        /// Description: Sends telemetry data to the Ground Terminal via TCP/IP.
+        ///              Transmits data over the established network stream.
         /// Parameters:
         ///   - data (string): The telemetry data to send
         ///   - sequenceNumber (int): The sequence number for this transmission
-        /// Return Type: bool - True if connected, false otherwise
+        /// Return Type: bool - True if sent successfully, false otherwise
         /// Exceptions:
         ///   - ArgumentNullException: Thrown when data is null
         /// </summary>
         /// <param name="data">The telemetry data to transmit.</param>
         /// <param name="sequenceNumber">The sequence number.</param>
-        /// <returns>True if data was "sent" successfully, false if not connected.</returns>
+        /// <returns>True if data was sent successfully, false if not connected or transmission failed.</returns>
         /// <exception cref="ArgumentNullException">Thrown when data is null.</exception>
         public bool SendData(string data, int sequenceNumber)
         {
@@ -108,15 +161,34 @@ namespace AircraftTransmissionSystem.Network
             }
 
             // Check connection status
-            if (!this.isConnected)
+            if (!this.isConnected || this.networkStream == null)
             {
                 Console.WriteLine("[NetworkClient] ERROR: Not connected. Cannot send data.");
                 return false;
             }
 
-            // Simulate data transmission (stub implementation)
-            Console.WriteLine($"[NetworkClient] SENT [SEQ:{sequenceNumber}]: {data}");
-            return true;
+            try
+            {
+                // Convert data to bytes (UTF-8 encoding)
+                byte[] dataBytes = Encoding.UTF8.GetBytes(data + "\n");
+
+                // Send data over network stream
+                this.networkStream.Write(dataBytes, 0, dataBytes.Length);
+
+                Console.WriteLine($"[NetworkClient] SENT [SEQ:{sequenceNumber}]: {data}");
+                return true;
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"[NetworkClient] ERROR: Failed to send data - {ex.Message}");
+                this.isConnected = false;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[NetworkClient] ERROR: Unexpected error during send - {ex.Message}");
+                return false;
+            }
         }
     }
 }
