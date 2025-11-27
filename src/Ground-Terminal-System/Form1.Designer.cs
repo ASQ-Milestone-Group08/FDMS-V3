@@ -31,7 +31,7 @@ namespace GroundTerminalSystem
         {
             this.components = new System.ComponentModel.Container();
 
-            //tab controls
+            //TAB CONTROLS
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabMonitoring = new System.Windows.Forms.TabPage();
             this.tabSearch = new System.Windows.Forms.TabPage();
@@ -41,7 +41,7 @@ namespace GroundTerminalSystem
             this.toggleRealTime = new System.Windows.Forms.CheckBox();
             this.lblRealTimeStatus = new System.Windows.Forms.Label();
 
-            //telemetry data
+            //TELEMETRY DATA
             this.panelLefft = new System.Windows.Forms.Panel();
             //tail #
             this lblTail = new System.Windows.Forms.Label();
@@ -58,8 +58,11 @@ namespace GroundTerminalSystem
             //pitch
             this lblPitch = new System.Windows.Forms.Label();
             this.txtPitch = new System.Windows.Forms.TextBox();
+            //bank
+            this lblBank = new System.Windows.Forms.Label();
+            this.txtBank = new System.Windows.Forms.TextBox();
 
-            //tab control
+            //TAB CONTROLS
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Controls.Add(this.tabMonitoring);
             this.tabControl.Controls.Add(this.tabSearch);
