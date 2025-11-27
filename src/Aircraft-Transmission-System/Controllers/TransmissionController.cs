@@ -106,10 +106,10 @@ namespace AircraftTransmissionSystem.Controllers
             // Stop and dispose timer
             if (this.transmissionTimer != null)
             {
-                this.transmissionTimer.Stop();
-                this.transmissionTimer.Elapsed -= OnTimerElapsed;
-                this.transmissionTimer.Dispose();
-                this.transmissionTimer = null;
+                this.transmissionTimer.Stop();                     // Stop the timer
+                this.transmissionTimer.Elapsed -= OnTimerElapsed;  // Unsubscribe event handler
+                this.transmissionTimer.Dispose();                  // Dispose timer resources
+                this.transmissionTimer = null;                     // Clear reference
             }
 
             // Disconnect from Ground Terminal
