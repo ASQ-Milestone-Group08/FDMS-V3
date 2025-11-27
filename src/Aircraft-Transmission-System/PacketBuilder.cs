@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace AircraftTransmissionSystem
 {
+    /// <summary>
+    /// Builds data packets (<see cref="Packet"/>) from aircraft telemetry data.
+    /// </summary>
+    /// <param name="aircraftTailNumber">The tail number of the aircraft to build packets for.</param>
     public class PacketBuilder(string aircraftTailNumber) : IPacketBuilder
     {
         // Fields
@@ -11,23 +11,28 @@ namespace AircraftTransmissionSystem
         private readonly string aircraftTailNumber = aircraftTailNumber;
         private uint packetSequenceCounter = 0;
 
-        // Methods
-        public Packet Build(string aircraftData)
+        /// <summary>
+        /// Builds a new telemetry packet to be sent to the Ground Terminal.
+        /// </summary>
+        /// <param name="aircraftTelemetry">The aircraft telemetry data to include in the packet.</param>
+        /// <returns>A Packet instance containing the aircraft data, aircraft tail number, a packet sequence number, and checksum.</returns>
+        /// <exception cref="ArgumentException">Thrown if aircraftTelemetry is null or empty.</exception>
+        public Packet Build(string aircraftTelemetry)
         {
-            if (string.IsNullOrEmpty(aircraftData))
+            if (string.IsNullOrEmpty(aircraftTelemetry))
             {
                 throw new ArgumentException("Aircraft telemetry data cannot be empty.");
             }
 
             // 1. Calculate checksum
-            int checksum = checksumCalculator.Calculate(aircraftData);
+            int checksum = checksumCalculator.Calculate(aircraftTelemetry);
 
             // 2. Build the packet
             var packet = new Packet
             {
                 AircraftTailNumber = aircraftTailNumber,
                 PacketSequenceNumber = packetSequenceCounter,
-                AircraftData = aircraftData,
+                AircraftTelemetry = aircraftTelemetry,
                 Checksum = checksum
             };
 

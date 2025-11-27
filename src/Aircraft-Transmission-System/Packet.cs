@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace AircraftTransmissionSystem
 {
+    /// <summary>
+    /// Represents a data packet containing aircraft telemetry information.
+    /// </summary>
     public class Packet
     {
         // Header
@@ -11,7 +10,7 @@ namespace AircraftTransmissionSystem
         public uint PacketSequenceNumber { get; set; }
 
         // Body
-        public required string AircraftData { get; set; }
+        public required string AircraftTelemetry { get; set; }
 
         // Trailer
         public int Checksum { get; set; }
