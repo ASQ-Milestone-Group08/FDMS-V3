@@ -36,6 +36,30 @@ namespace GroundTerminalSystem
             this.tabMonitoring = new System.Windows.Forms.TabPage();
             this.tabSearch = new System.Windows.Forms.TabPage();
 
+            //real-time toggle control
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.toggleRealTime = new System.Windows.Forms.CheckBox();
+            this.lblRealTimeStatus = new System.Windows.Forms.Label();
+
+            //telemetry data
+            this.panelLefft = new System.Windows.Forms.Panel();
+            //tail #
+            this lblTail = new System.Windows.Forms.Label();
+            this.txtTail = new System.Windows.Forms.TextBox();
+            //timestamp
+            this lblTimestamp = new System.Windows.Forms.Label();
+            this.txtTimestamp = new System.Windows.Forms.TextBox();
+            //altitude
+            this lblAltitiude = new System.Windows.Forms.Label();
+            this.txtAltitiude = new System.Windows.Forms.TextBox();
+            //weight
+            this lblWeight = new System.Windows.Forms.Label();
+            this.txtWeight = new System.Windows.Forms.TextBox();
+            //pitch
+            this lblPitch = new System.Windows.Forms.Label();
+            this.txtPitch = new System.Windows.Forms.TextBox();
+
+            //tab control
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Controls.Add(this.tabMonitoring);
             this.tabControl.Controls.Add(this.tabSearch);
