@@ -35,7 +35,7 @@ namespace GroundTerminalSystem
 
         private void UpdateRealTimeStatus()
         {
-            if (toggleRealTime.Checked)
+            if (toggleRT.Checked)
             {
                 lblRealTimeStatus.Text = "ON";
                 lblRealTimeStatus.ForeColor = Color.Green;

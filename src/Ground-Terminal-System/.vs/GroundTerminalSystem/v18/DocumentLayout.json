@@ -25,20 +25,21 @@
           "SelectedChildIndex": 3,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "Form1.cs [Design]",
               "DocumentMoniker": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.cs [Design]*",
-              "RelativeToolTip": "Form1.cs [Design]*",
+              "ToolTip": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.cs [Design]",
+              "RelativeToolTip": "Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-27T01:37:12.682Z",
+              "IsPinned": true,
               "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Document",
@@ -46,9 +47,9 @@
               "Title": "Form1.Designer.cs",
               "DocumentMoniker": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.Designer.cs",
               "RelativeDocumentMoniker": "Form1.Designer.cs",
-              "ToolTip": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.Designer.cs*",
-              "RelativeToolTip": "Form1.Designer.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.Designer.cs",
+              "RelativeToolTip": "Form1.Designer.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAIAwwCYAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-26T23:55:46.222Z",
               "EditorCaption": ""
@@ -59,9 +60,9 @@
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.cs*",
-              "RelativeToolTip": "Form1.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAcAAAAAAAAAA==",
+              "ToolTip": "C:\\erin\\school\\college9\\advsofqua\\milestone\\pgm\\FDMS-V3\\src\\Ground-Terminal-System\\Form1.cs",
+              "RelativeToolTip": "Form1.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAYwB4AAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-26T23:55:43.216Z",
               "EditorCaption": ""

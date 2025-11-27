@@ -74,5 +74,33 @@ namespace GroundTerminalSystem
         }
 
         #endregion
+
+        //FIELD DECLARATIONS
+        //tabs
+        private System.Windows.Forms.TabControl tabControl;
+        private System.Windows.Forms.TabPage tabMonitoring;
+        private System.Windows.Forms.TabPage tabSearch;
+        //real-time toggle/status
+        private System.Windows.Forms.Panel panelTop;
+        private System.Windows.Forms.CheckBox toggleRealTime;
+        private System.Windows.Forms.Label lblRealTimeStatus;
+        //telemetry data panel and labels
+        private System.Windows.Forms.Panel panelLeft;
+        private System.Windows.Forms.Label lblTail;
+        private System.Windows.Forms.Label lblTimestamp;
+        private System.Windows.Forms.Label lblAltitude;
+        private System.Windows.Forms.Label lblWeight;
+        private System.Windows.Forms.Label lblPitch;
+        private System.Windows.Forms.Label lblBank;
+        //telemetry data textboxes
+        private System.Windows.Forms.TextBox txtTail;
+        private System.Windows.Forms.TextBox txtTimestamp;
+        private System.Windows.Forms.TextBox txtAltitude;
+        private System.Windows.Forms.TextBox txtWeight;
+        private System.Windows.Forms.TextBox txtPitch;
+        private System.Windows.Forms.TextBox txtBank;
+        //buttons
+        private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Button btnStop;
     }
 }
