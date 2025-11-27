@@ -180,7 +180,7 @@ namespace GroundTerminalSystem
             this.btnStop.Enabled = false;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
 
-            //control layout oof the telemetry panel
+            //control layout of the telemetry panel
             this.panelLeft.Controls.AddRange(new System.Windows.Forms.Control[]
             {
                 this.lblTail, this.txtTail,
@@ -191,6 +191,29 @@ namespace GroundTerminalSystem
                 this.lblBank, this.txtBank,
                 this.btnStart, this.btnStop
             });
+
+            //chart panel display
+            this.panelCharts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelCharts.Padding = new System.Windows.Forms.Padding(10);
+
+            //G-Force display chart
+            this.chartGforce.Dock = System.Windows.Forms.DockStyle.Top;
+            this.chartGforce.Height = (int)(this.ClientSize.Height * 0.6);
+
+            var gArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("GArea");
+            this.chartGforce.ChartAreas.Add(gArea);
+
+            var sNx = new System.Windows.Forms.DataVisualization.Charting.Series("Nx");
+            var sNy = new System.Windows.Forms.DataVisualization.Charting.Series("Ny");
+            var sNz = new System.Windows.Forms.DataVisualization.Charting.Series("Nz");
+
+            sNx.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            sNy.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            sNz.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+            this.chartGforce.Series.Add(sNx);
+            this.chartGforce.Series.Add(sNy);
+            this.chartGforce.Series.Add(sNz);
         }
 
         #endregion
