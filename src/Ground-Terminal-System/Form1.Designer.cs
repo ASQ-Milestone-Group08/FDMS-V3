@@ -29,7 +29,16 @@ namespace GroundTerminalSystem
         /// </summary>
         private void InitializeComponent()
         {
-            
+            this.components = new System.ComponentModel.Container();
+
+            //tab controls
+            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabMonitoring = new System.Windows.Forms.TabPage();
+            this.tabSearch = new System.Windows.Forms.TabPage();
+
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.Controls.Add(this.tabMonitoring);
+            this.tabControl.Controls.Add(this.tabSearch);
 
         }
 
