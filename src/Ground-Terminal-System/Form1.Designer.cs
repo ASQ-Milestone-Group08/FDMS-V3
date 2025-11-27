@@ -62,6 +62,10 @@ namespace GroundTerminalSystem
             this lblBank = new System.Windows.Forms.Label();
             this.txtBank = new System.Windows.Forms.TextBox();
 
+            //start/stop buttons
+            this.btnStart = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
+
             //TAB CONTROLS
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Controls.Add(this.tabMonitoring);

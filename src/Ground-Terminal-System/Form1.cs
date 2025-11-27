@@ -47,6 +47,22 @@ namespace GroundTerminalSystem
             }
         }//end UpdateRealTimeStatus
 
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            simSource = new CancellationTokenSource();
+            StartSim(simSource.Token);
+
+            btnStart.Enabled = false;
+            btnStop.Enabled = true;
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            simSource?.Cancel();
+            btnStart.Enabled = true;
+            btnStop.Enabled = false;
+        }
+
 
     }//END class
 }//END namespace
