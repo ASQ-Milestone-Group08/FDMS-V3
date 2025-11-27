@@ -180,7 +180,17 @@ namespace GroundTerminalSystem
             this.btnStop.Enabled = false;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
 
-
+            //control layout oof the telemetry panel
+            this.panelLeft.Controls.AddRange(new System.Windows.Forms.Control[]
+            {
+                this.lblTail, this.txtTail,
+                this.lblTimestamp, this.txtTimestamp,
+                this.lblAltitude, this.txtAltitude,
+                this.lblWeight, this.txtWeight,
+                this.lblPitch, this.txtPitch,
+                this.lblBank, this.txtBank,
+                this.btnStart, this.btnStop
+            });
         }
 
         #endregion
