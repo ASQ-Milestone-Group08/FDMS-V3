@@ -106,10 +106,79 @@ namespace GroundTerminalSystem
             this.panelTop.Controls.Add(this.toggleRT);
             this.panelTop.Controls.Add(this.lblRealTimeStatus);
 
-            //chart panels
+            //left panel layout
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelLeft.Width = 350;
             this.panelLeft.Padding = new System.Windows.Forms.Padding(12);
+
+            //variables for layout
+            int y = 20;
+            int labelX = 10;
+            int boxX = 120;
+            int w = 180;
+            int h = 26;
+            int gap = 40;
+
+            //tail
+            this.lblTail.Text = "Tail #:";
+            this.lblTail.Location = new System.Drawing.Point(labelX, y);
+            this.lblTail.AutoSize = true;
+            this.txtTail.Location = new System.Drawing.Point(boxX, y - 4);
+            this.txtTail.Width = w;
+            this.txtTail.ReadOnly = true;
+            y += gap;
+            //timestamp
+            this.lblTimestamp.Text = "Timestamp:";
+            this.lblTimestamp.Location = new System.Drawing.Point(labelX, y);
+            this.lblTimestamp.AutoSize = true;
+            this.txtTimestamp.Location = new System.Drawing.Point(boxX, y - 4);
+            this.txtTimestamp.Width = w;
+            this.txtTimestamp.ReadOnly = true;
+            y += gap;
+            //altitude
+            this.lblAltitude.Text = "Altitude:";
+            this.lblAltitude.Location = new System.Drawing.Point(labelX, y);
+            this.lblAltitude.AutoSize = true;
+            this.txtAltitude.Location = new System.Drawing.Point(boxX, y - 4);
+            this.txtAltitude.Width = w;
+            this.txtAltitude.ReadOnly = true;
+            y += gap;
+            //weight
+            this.lblWeight.Text = "Weight (kg):";
+            this.lblWeight.Location = new System.Drawing.Point(labelX, y);
+            this.lblWeight.AutoSize = true;
+            this.txtWeight.Location = new System.Drawing.Point(boxX, y - 4);
+            this.txtWeight.Width = w;
+            this.txtWeight.ReadOnly = true;
+            y += gap;
+            //pitch
+            this.lblPitch.Text = "Pitch:";
+            this.lblPitch.Location = new System.Drawing.Point(labelX, y);
+            this.lblPitch.AutoSize = true;
+            this.txtPitch.Location = new System.Drawing.Point(boxX, y - 4);
+            this.txtPitch.Width = w;
+            this.txtPitch.ReadOnly = true;
+            y += gap;
+            //bank
+            this.lblBank.Text = "Bank:";
+            this.lblBank.Location = new System.Drawing.Point(labelX, y);
+            this.lblBank.AutoSize = true;
+            this.txtBank.Location = new System.Drawing.Point(boxX, y - 4);
+            this.txtBank.Width = w;
+            this.txtBank.ReadOnly = true;
+            y += gap;
+
+            //StartSim button
+            this.btnStart.Text = "Start Real-Time";
+            this.btnStart.Location = new System.Drawing.Point(20, y + 20);
+            this.btnStart.Width = 130;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            //StopSim button
+            this.btnStop.Text = "Stop Real-Time";
+            this.btnStop.Location = new System.Drawing.Point(170, y + 20);
+            this.btnStop.Width = 130;
+            this.btnStop.Enabled = false;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
 
 
         }
