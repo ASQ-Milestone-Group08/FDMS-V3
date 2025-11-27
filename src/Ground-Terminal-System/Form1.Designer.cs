@@ -66,7 +66,17 @@ namespace GroundTerminalSystem
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
 
+            //CHART PANELS
+            this.panelCharts = new System.Windows.Forms.Panel();
+            this.chartGforce = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chartAltitude = new System.Windows.Forms.DataVisualization.Charting.Chart();
+
             //DISPLAY PROPERTIES
+            //form
+            this.SuspendLayout();
+            this.ClientSize = new System.Drawing.Size(1200, 760);
+            this.Text = "FDMS Ground Terminal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             //tab control
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Controls.Add(this.tabMonitoring);
@@ -95,6 +105,11 @@ namespace GroundTerminalSystem
             this.lblRealTimeStatus.Location = new System.Drawing.Point(130, 14);
             this.panelTop.Controls.Add(this.toggleRT);
             this.panelTop.Controls.Add(this.lblRealTimeStatus);
+
+            //chart panels
+            this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelLeft.Width = 350;
+            this.panelLeft.Padding = new System.Windows.Forms.Padding(12);
 
 
         }
@@ -128,5 +143,9 @@ namespace GroundTerminalSystem
         //buttons
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnStop;
+        //chart panels
+        private System.Windows.Forms.Panel panelCharts;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartGforce;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartAltitude;
     }
 }
