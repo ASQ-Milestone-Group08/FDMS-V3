@@ -38,7 +38,7 @@ namespace GroundTerminalSystem
 
             //real-time toggle control
             this.panelTop = new System.Windows.Forms.Panel();
-            this.toggleRealTime = new System.Windows.Forms.CheckBox();
+            this.toggleRT = new System.Windows.Forms.CheckBox();
             this.lblRealTimeStatus = new System.Windows.Forms.Label();
 
             //TELEMETRY DATA
@@ -82,7 +82,7 @@ namespace GroundTerminalSystem
         private System.Windows.Forms.TabPage tabSearch;
         //real-time toggle/status
         private System.Windows.Forms.Panel panelTop;
-        private System.Windows.Forms.CheckBox toggleRealTime;
+        private System.Windows.Forms.CheckBox toggleRT;
         private System.Windows.Forms.Label lblRealTimeStatus;
         //telemetry data panel and labels
         private System.Windows.Forms.Panel panelLeft;
