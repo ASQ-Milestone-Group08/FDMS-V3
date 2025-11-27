@@ -66,10 +66,36 @@ namespace GroundTerminalSystem
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
 
-            //TAB CONTROLS
+            //DISPLAY PROPERTIES
+            //tab control
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Controls.Add(this.tabMonitoring);
             this.tabControl.Controls.Add(this.tabSearch);
+
+            //monitoring tab
+            this.tabMonitoring.Text = "Monitoring";
+            this.tabMonitoring.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Height = 50;
+            this.panelTop.Padding = new System.Windows.Forms.Padding(10);
+
+            //toggleRT enabled
+            this.toggleRT.Appearance = System.Windows.Forms.Appearance.Button;
+            this.toggleRT.Text = "Real-Time";
+            this.toggleRT.AutoSize = true;
+            this.toggleRT.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.toggleRT.BackColor = System.Drawing.Color.LightGray;
+            this.toggleRT.Location = new System.Drawing.Point(10, 10);
+            this.toggleRT.CheckedChanged += new System.EventHandler(this.toggleRealTime);
+
+            //status label
+            this.lblRealTimeStatus.Text = "OFF";
+            this.lblRealTimeStatus.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblRealTimeStatus.AutoSize = true;
+            this.lblRealTimeStatus.Location = new System.Drawing.Point(130, 14);
+            this.panelTop.Controls.Add(this.toggleRT);
+            this.panelTop.Controls.Add(this.lblRealTimeStatus);
+
 
         }
 
