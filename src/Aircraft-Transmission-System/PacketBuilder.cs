@@ -7,6 +7,7 @@ namespace AircraftTransmissionSystem
     public class PacketBuilder(string aircraftTailNumber) : IPacketBuilder
     {
         // Fields
+        private readonly ChecksumCalculator checksumCalculator = new ChecksumCalculator();
         private readonly string aircraftTailNumber = aircraftTailNumber;
         private uint packetSequenceCounter = 0;
 
@@ -19,7 +20,7 @@ namespace AircraftTransmissionSystem
             }
 
             // 1. Calculate checksum
-            int checksum = 0;
+            int checksum = checksumCalculator.Calculate(aircraftData);
 
             // 2. Build the packet
             var packet = new Packet
