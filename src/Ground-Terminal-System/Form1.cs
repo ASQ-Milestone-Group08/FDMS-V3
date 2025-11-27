@@ -24,9 +24,28 @@ namespace GroundTerminalSystem
         public Form1()
         {
             InitializeComponent();
-            InitializeDatabase();
             UpdateRealTimeStatus();
         }
+
+        //REAL-TIME 
+        private void toggleRealTime(object sender, EventArgs e)
+        {
+            UpdateRealTimeStatus();
+        }//end toggleRealTime
+
+        private void UpdateRealTimeStatus()
+        {
+            if (toggleRealTime.Checked)
+            {
+                lblRealTimeStatus.Text = "ON";
+                lblRealTimeStatus.ForeColor = Color.Green;
+            }
+            else
+            {
+                lblRealTimeStatus.Text = "OFF";
+                lblRealTimeStatus.ForeColor = Color.Red;
+            }
+        }//end UpdateRealTimeStatus
 
 
     }//END class
