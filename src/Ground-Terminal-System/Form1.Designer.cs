@@ -42,24 +42,24 @@ namespace GroundTerminalSystem
             this.lblRealTimeStatus = new System.Windows.Forms.Label();
 
             //TELEMETRY DATA
-            this.panelLefft = new System.Windows.Forms.Panel();
+            this.panelLeft = new System.Windows.Forms.Panel();
             //tail #
-            this lblTail = new System.Windows.Forms.Label();
+            this.lblTail = new System.Windows.Forms.Label();
             this.txtTail = new System.Windows.Forms.TextBox();
             //timestamp
-            this lblTimestamp = new System.Windows.Forms.Label();
+            this.lblTimestamp = new System.Windows.Forms.Label();
             this.txtTimestamp = new System.Windows.Forms.TextBox();
             //altitude
-            this lblAltitiude = new System.Windows.Forms.Label();
-            this.txtAltitiude = new System.Windows.Forms.TextBox();
+            this.lblAltitude = new System.Windows.Forms.Label();
+            this.txtAltitude = new System.Windows.Forms.TextBox();
             //weight
-            this lblWeight = new System.Windows.Forms.Label();
+            this.lblWeight = new System.Windows.Forms.Label();
             this.txtWeight = new System.Windows.Forms.TextBox();
             //pitch
-            this lblPitch = new System.Windows.Forms.Label();
+            this.lblPitch = new System.Windows.Forms.Label();
             this.txtPitch = new System.Windows.Forms.TextBox();
             //bank
-            this lblBank = new System.Windows.Forms.Label();
+            this.lblBank = new System.Windows.Forms.Label();
             this.txtBank = new System.Windows.Forms.TextBox();
 
             //start/stop buttons
