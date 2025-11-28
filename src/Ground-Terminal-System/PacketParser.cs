@@ -27,13 +27,15 @@ namespace GroundTerminalSystem
                 string body = segments[2];
                 int receivedChecksum = int.Parse(segments[3]);
 
-                var values = body.Split(',');
+                var values = body.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-                if (values.Length != 8)
+                if (values.Length < 8)
                 {
-                    System.Diagnostics.Debug.WriteLine("Packet body incorrect: missing telemetry fields");
+                    System.Diagnostics.Debug.WriteLine($"Packet body incorrect: expected 8 fields, got {values.Length}");
                     return false;
                 }
+
+
 
                 // Extract values in groups
                 var gForce = ExtractGForce(values);
