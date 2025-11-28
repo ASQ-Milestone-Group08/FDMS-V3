@@ -108,7 +108,14 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
-        ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"ASQ-Milestone-Group08_FDMS-V3" /o:"asq-milestone-group08" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" /d:sonar.sources="src" /d:sonar.tests="tests"
+        ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
+          /k:"ASQ-Milestone-Group08_FDMS-V3" `
+          /o:"asq-milestone-group08" `
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+          /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" `
+          /d:sonar.sources="src" `
+          /d:sonar.tests="tests" `
+          /d:sonar.coverage.exclusions="**/Program.cs,**/*.Designer.cs,**/obj/**,**/bin/**,**/*.g.cs,**/*.g.i.cs,**/telemetry-data/**"
 
     # Restore dependencies - added by Chris
     - name: Restore dependencies
