@@ -39,13 +39,13 @@ namespace GroundTerminalSystem
                 var data = new TelemetryData
                 {
                     Timestamp = values[0],
-                    AccelX = float.Parse(values[1]),
-                    AccelY = float.Parse(values[2]),
-                    AccelZ = float.Parse(values[3]),
-                    Weight = float.Parse(values[4]),
-                    Altitude = float.Parse(values[5]),
-                    Pitch = float.Parse(values[6]),
-                    Bank = float.Parse(values[7]),
+                    AccelX = double.Parse(values[1]),
+                    AccelY = double.Parse(values[2]),
+                    AccelZ = double.Parse(values[3]),
+                    Weight = double.Parse(values[4]),
+                    Altitude = double.Parse(values[5]),
+                    Pitch = double.Parse(values[6]),
+                    Bank = double.Parse(values[7]),
                     Checksum = receivedChecksum
                 };
 
