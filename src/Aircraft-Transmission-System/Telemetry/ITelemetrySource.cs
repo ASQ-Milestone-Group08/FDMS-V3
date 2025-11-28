@@ -1,4 +1,4 @@
-namespace AircraftTransmissionSystem
+namespace AircraftTransmissionSystem.Telemetry
 {
     /// <summary>
     /// Interface for reading telemetry data from various sources.

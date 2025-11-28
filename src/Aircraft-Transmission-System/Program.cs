@@ -1,6 +1,7 @@
 using AircraftTransmissionSystem.Controllers;
 using AircraftTransmissionSystem.Logging;
 using AircraftTransmissionSystem.Network;
+using AircraftTransmissionSystem.Telemetry;
 using System.Text.Json;
 
 namespace AircraftTransmissionSystem

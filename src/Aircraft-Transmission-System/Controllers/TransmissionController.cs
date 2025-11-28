@@ -1,6 +1,7 @@
 using System.Timers;
 using AircraftTransmissionSystem.Network;
 using AircraftTransmissionSystem.Logging;
+using AircraftTransmissionSystem.Telemetry;
 
 namespace AircraftTransmissionSystem.Controllers
 {

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AircraftTransmissionSystem
+namespace AircraftTransmissionSystem.Telemetry
 {
     /// <summary>
     /// Reads telemetry data from ASCII text files.
