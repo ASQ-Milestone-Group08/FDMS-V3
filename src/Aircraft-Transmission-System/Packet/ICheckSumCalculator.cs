@@ -6,10 +6,13 @@ namespace AircraftTransmissionSystem.Packet
     public interface ICheckSumCalculator
     {
         /// <summary>
-        /// Calculates a numeric value (checksum) based on the provided telemetry data string.
+        /// Calculates a checksum value based on altitude, pitch, and bank values.
+        /// Formula: (Altitude + Pitch + Bank) / 3
         /// </summary>
-        /// <param name="aircraftTelemetry">The telemetry data to be processed.</param>
-        /// <returns>An integer representing the calculated result from the telemetry data.</returns>
-        public int Calculate(string aircraftTelemetry);
+        /// <param name="altitude">The aircraft altitude value.</param>
+        /// <param name="pitch">The aircraft pitch angle.</param>
+        /// <param name="bank">The aircraft bank angle.</param>
+        /// <returns>An integer representing the calculated checksum.</returns>
+        public int Calculate(double altitude, double pitch, double bank);
     }
 }
