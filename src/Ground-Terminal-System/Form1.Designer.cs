@@ -30,6 +30,8 @@ namespace GroundTerminalSystem
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.Load += new System.EventHandler(this.Form1_Load);
+
 
             //TAB CONTROLS
             this.tabControl = new System.Windows.Forms.TabControl();
@@ -85,6 +87,7 @@ namespace GroundTerminalSystem
             //monitoring tab
             this.tabMonitoring.Text = "Monitoring";
             this.tabMonitoring.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabMonitoring.Size = new System.Drawing.Size(1200, 760);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Height = 50;
             this.panelTop.Padding = new System.Windows.Forms.Padding(10);
@@ -107,9 +110,10 @@ namespace GroundTerminalSystem
             this.panelTop.Controls.Add(this.lblRealTimeStatus);
 
             //left panel layout
+            this.panelLeft.Width = 350;   // MUST come before docking
+            this.panelLeft.MinimumSize = new System.Drawing.Size(50, 0); // prevents 0 width crash
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelLeft.Width = 350;
-            this.panelLeft.Padding = new System.Windows.Forms.Padding(12);
+
 
             //variables for layout
             int y = 20;
@@ -198,7 +202,11 @@ namespace GroundTerminalSystem
 
             //G-Force display chart
             this.chartGforce.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chartGforce.Height = (int)(this.ClientSize.Height * 0.6);
+            this.chartGforce.Height = 300;   // TEMP height to prevent 0px crash
+            this.chartGforce.MinimumSize = new System.Drawing.Size(0, 50);  // safety
+            this.panelCharts.Controls.Add(this.chartGforce);
+
+
 
             var gArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("GArea");
             this.chartGforce.ChartAreas.Add(gArea);
@@ -225,9 +233,14 @@ namespace GroundTerminalSystem
             sAlt.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             this.chartAltitude.Series.Add(sAlt);
 
-            //add chart panels to monitoring tab
             this.panelCharts.Controls.Add(this.chartAltitude);
-            this.panelCharts.Controls.Add(this.chartGforce);
+
+
+
+            //add chart panels to monitoring tab
+            this.tabMonitoring.Controls.Add(this.panelCharts);
+            this.tabMonitoring.Controls.Add(this.panelLeft);
+            this.tabMonitoring.Controls.Add(this.panelTop);
 
         }
 

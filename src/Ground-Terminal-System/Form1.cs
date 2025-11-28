@@ -43,6 +43,19 @@ namespace GroundTerminalSystem
             UpdateRealTimeStatus();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (panelLeft.Width < 50)
+            {
+                panelLeft.Width = 350;
+            }
+            // Avoid 0-height errors
+            int h = this.ClientSize.Height - this.panelTop.Height;
+
+            chartGforce.Height = (int)(h * 0.60);
+            chartAltitude.Height = (int)(h * 0.40);
+        }
+
         //REAL-TIME 
         private void toggleRealTime(object sender, EventArgs e)
         {
