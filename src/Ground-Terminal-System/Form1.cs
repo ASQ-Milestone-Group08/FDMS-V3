@@ -150,12 +150,12 @@ namespace GroundTerminalSystem
         private void UpdateRealTimeUI(Telemetry t)
         {
             //textboxes
-            txtTail.Text = t.Tail;
-            txtTimestamp.Text = t.Time.ToString("HH:mm:ss");
-            txtAltitude.Text = t.Altitude.ToString("F0");
-            txtWeight.Text = t.Weight.ToString("F2");
-            txtPitch.Text = t.Pitch.ToString("F4");
-            txtBank.Text = t.Bank.ToString("F4");
+            lblTailValue.Text = t.Tail;
+            lblTimestampValue.Text = t.Time.ToString("HH:mm:ss");
+            lblAltitudeValue.Text = t.Altitude.ToString("F0");
+            lblWeightValue.Text = t.Weight.ToString("F2");
+            lblPitchValue.Text = t.Pitch.ToString("F4");
+            lblBankValue.Text = t.Bank.ToString("F4");
 
             //charts
             //altitude chart limit to last 40 points
