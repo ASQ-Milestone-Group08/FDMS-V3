@@ -9,15 +9,15 @@ namespace AircraftTransmissionSystem.Packet
         // Fields
         private readonly ChecksumCalculator checksumCalculator = new ChecksumCalculator();
         private readonly string aircraftTailNumber = aircraftTailNumber;
-        private uint packetSequenceCounter = 0;
 
         /// <summary>
         /// Builds a new telemetry packet to be sent to the Ground Terminal.
         /// </summary>
         /// <param name="aircraftTelemetry">The aircraft telemetry data to include in the packet.</param>
-        /// <returns>A Packet instance containing the aircraft data, aircraft tail number, a packet sequence number, and checksum.</returns>
+        /// <param name="sequenceNumber">The sequence number for this packet (managed by TransmissionController).</param>
+        /// <returns>A Packet instance containing the aircraft data, aircraft tail number, sequence number, and checksum.</returns>
         /// <exception cref="ArgumentException">Thrown if aircraftTelemetry is null or empty.</exception>
-        public Packet Build(string aircraftTelemetry)
+        public Packet Build(string aircraftTelemetry, uint sequenceNumber)
         {
             if (string.IsNullOrEmpty(aircraftTelemetry))
             {
@@ -31,13 +31,10 @@ namespace AircraftTransmissionSystem.Packet
             var packet = new Packet
             {
                 AircraftTailNumber = aircraftTailNumber,
-                PacketSequenceNumber = packetSequenceCounter,
+                PacketSequenceNumber = sequenceNumber,
                 AircraftTelemetry = aircraftTelemetry,
                 Checksum = checksum
             };
-
-            // 3. Increment sequence for the next packet
-            packetSequenceCounter++;
 
             return packet;
         }
