@@ -34,7 +34,6 @@ namespace GroundTerminalSystem
 
     public partial class Form1 : Form
     {
-       
         private CancellationTokenSource simSource;
         private readonly string connectionString =
             "Server=fdms-server.database.windows.net; Database=FDMS_DB; User Id=FDMS-Admin; Password=VeryStrongPW##++;";

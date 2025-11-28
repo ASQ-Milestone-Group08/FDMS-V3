@@ -68,8 +68,10 @@ namespace GroundTerminalSystem
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
 
-            //CHART PANELS
+            //CHART PANELS - NEW STABLE LAYOUT
             this.panelCharts = new System.Windows.Forms.Panel();
+            this.panelG = new System.Windows.Forms.Panel();
+            this.panelAlt = new System.Windows.Forms.Panel();
             this.chartGforce = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartAltitude = new System.Windows.Forms.DataVisualization.Charting.Chart();
 
@@ -216,15 +218,22 @@ namespace GroundTerminalSystem
                 this.btnStart, this.btnStop
             });
 
-            //chart panel display
+            // ==========================
+            // NEW STABLE CHART LAYOUT
+            // ==========================
+
+            // Parent chart panel
             this.panelCharts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCharts.Padding = new System.Windows.Forms.Padding(10);
 
-            //G-Force display chart
-            this.chartGforce.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chartGforce.Height = 300;   // TEMP height to prevent 0px crash
-            this.chartGforce.MinimumSize = new System.Drawing.Size(0, 50);  // safety
-            this.panelCharts.Controls.Add(this.chartGforce);
+            // Top panel (G-Force) - fixed height
+            this.panelG.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelG.Height = 350; // fixed height prevents 0px errors
+            this.panelG.Padding = new System.Windows.Forms.Padding(0, 0, 0, 8);
+
+            // Create chartGforce
+            this.chartGforce.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chartGforce.MinimumSize = new System.Drawing.Size(100, 100); // safety
 
             var gArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("GArea");
             this.chartGforce.ChartAreas.Add(gArea);
@@ -241,18 +250,30 @@ namespace GroundTerminalSystem
             this.chartGforce.Series.Add(sNy);
             this.chartGforce.Series.Add(sNz);
 
-            //altitude chart panel
+            this.panelG.Controls.Add(this.chartGforce);
+
+            // Bottom panel (Altitude) - fill
+            this.panelAlt.Dock = System.Windows.Forms.DockStyle.Fill;
+
             this.chartAltitude.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chartAltitude.MinimumSize = new System.Drawing.Size(100, 100); // safety
+
             var altArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("AltArea");
             this.chartAltitude.ChartAreas.Add(altArea);
 
             var sAlt = new System.Windows.Forms.DataVisualization.Charting.Series("Altitude");
             sAlt.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             this.chartAltitude.Series.Add(sAlt);
-            this.panelCharts.Controls.Add(this.chartAltitude);
 
-            //add chart panels to monitoring tab
+            this.panelAlt.Controls.Add(this.chartAltitude);
+
+            // Add both chart panels to parent chart panel
+            this.panelCharts.Controls.Add(this.panelAlt);
+            this.panelCharts.Controls.Add(this.panelG);
+
+            // Add chart panel to monitoring tab
             this.tabMonitoring.Controls.Add(this.panelCharts);
+
             this.tabMonitoring.Controls.Add(this.panelLeft);
             this.tabMonitoring.Controls.Add(this.panelTop);
 
@@ -374,6 +395,8 @@ namespace GroundTerminalSystem
         private System.Windows.Forms.Button btnStop;
         //chart panels
         private System.Windows.Forms.Panel panelCharts;
+        private System.Windows.Forms.Panel panelG;
+        private System.Windows.Forms.Panel panelAlt;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartGforce;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartAltitude;
 
