@@ -73,6 +73,28 @@ namespace GroundTerminalSystem
             this.chartGforce = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartAltitude = new System.Windows.Forms.DataVisualization.Charting.Chart();
 
+
+            //SEARCH TAB CONTROLS
+            this.lblSearchTail = new System.Windows.Forms.Label();
+            this.txtSearchTail = new System.Windows.Forms.TextBox();
+            //start date
+            this.lblStart = new System.Windows.Forms.Label();
+            this.dtStart = new System.Windows.Forms.DateTimePicker();
+            //end date
+            this.lblEnd = new System.Windows.Forms.Label();
+            this.dtEnd = new System.Windows.Forms.DateTimePicker();
+            //parameter
+            this.lblParam = new System.Windows.Forms.Label();
+            this.cmbParameter = new System.Windows.Forms.ComboBox();
+            //search and export buttons
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.btnExport = new System.Windows.Forms.Button();
+            //data grids
+            this.dgvG = new System.Windows.Forms.DataGridView();
+            this.dgvAlt = new System.Windows.Forms.DataGridView();
+
+
+
             //DISPLAY PROPERTIES
             //form
             this.SuspendLayout();
@@ -110,8 +132,8 @@ namespace GroundTerminalSystem
             this.panelTop.Controls.Add(this.lblRealTimeStatus);
 
             //left panel layout
-            this.panelLeft.Width = 350;   // MUST come before docking
-            this.panelLeft.MinimumSize = new System.Drawing.Size(50, 0); // prevents 0 width crash
+            this.panelLeft.Width = 350;
+            this.panelLeft.MinimumSize = new System.Drawing.Size(50, 0);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
 
 
@@ -206,8 +228,6 @@ namespace GroundTerminalSystem
             this.chartGforce.MinimumSize = new System.Drawing.Size(0, 50);  // safety
             this.panelCharts.Controls.Add(this.chartGforce);
 
-
-
             var gArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("GArea");
             this.chartGforce.ChartAreas.Add(gArea);
 
@@ -225,22 +245,22 @@ namespace GroundTerminalSystem
 
             //altitude chart panel
             this.chartAltitude.Dock = System.Windows.Forms.DockStyle.Fill;
-
             var altArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("AltArea");
             this.chartAltitude.ChartAreas.Add(altArea);
 
             var sAlt = new System.Windows.Forms.DataVisualization.Charting.Series("Altitude");
             sAlt.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             this.chartAltitude.Series.Add(sAlt);
-
             this.panelCharts.Controls.Add(this.chartAltitude);
-
-
 
             //add chart panels to monitoring tab
             this.tabMonitoring.Controls.Add(this.panelCharts);
             this.tabMonitoring.Controls.Add(this.panelLeft);
             this.tabMonitoring.Controls.Add(this.panelTop);
+
+            //SEARCH TAB
+            this.tabSearch.Text = "Search Database";
+            this.tabSearch.BackColor = System.Drawing.Color.WhiteSmoke;
 
         }
 
@@ -251,6 +271,8 @@ namespace GroundTerminalSystem
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabMonitoring;
         private System.Windows.Forms.TabPage tabSearch;
+
+        //MONITORING 
         //real-time toggle/status
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.CheckBox toggleRT;
@@ -277,5 +299,20 @@ namespace GroundTerminalSystem
         private System.Windows.Forms.Panel panelCharts;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartGforce;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartAltitude;
+
+        //SEARCH TAB
+        private System.Windows.Forms.Label lblSearchTail;
+        private System.Windows.Forms.TextBox txtSearchTail;
+        private System.Windows.Forms.Label lblStart;
+        private System.Windows.Forms.DateTimePicker dtStart;
+        private System.Windows.Forms.Label lblEnd;
+        private System.Windows.Forms.DateTimePicker dtEnd;
+        private System.Windows.Forms.Label lblParam;
+        private System.Windows.Forms.ComboBox cmbParameter;
+        private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Button btnExport;
+        //data grids
+        private System.Windows.Forms.DataGridView dgvG;
+        private System.Windows.Forms.DataGridView dgvAlt;
     }
 }
