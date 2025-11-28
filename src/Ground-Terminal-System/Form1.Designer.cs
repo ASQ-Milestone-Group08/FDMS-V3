@@ -311,7 +311,33 @@ namespace GroundTerminalSystem
                 this.btnExport
             });
 
+            //added the data grids
+            this.dgvG.Location = new System.Drawing.Point(20, 120);
+            this.dgvG.Size = new System.Drawing.Size(1120, 180);
+            this.dgvG.ReadOnly = true;
+            this.dgvG.AllowUserToAddRows = false;
 
+            this.dgvG.Columns.Add("TS", "Timestamp");
+            this.dgvG.Columns.Add("X", "Accel X");
+            this.dgvG.Columns.Add("Y", "Accel Y");
+            this.dgvG.Columns.Add("Z", "Accel Z");
+            this.dgvG.Columns.Add("W", "Weight");
+            this.dgvG.Columns.Add("Stored", "StoredAt");
+
+            this.dgvAlt.Location = new System.Drawing.Point(20, 330);
+            this.dgvAlt.Size = new System.Drawing.Size(1120, 200);
+            this.dgvAlt.ReadOnly = true;
+            this.dgvAlt.AllowUserToAddRows = false;
+
+            this.dgvAlt.Columns.Add("TS", "Timestamp");
+            this.dgvAlt.Columns.Add("ALT", "Altitude");
+            this.dgvAlt.Columns.Add("P", "Pitch");
+            this.dgvAlt.Columns.Add("B", "Bank");
+            this.dgvAlt.Columns.Add("W", "Weight");
+            this.dgvAlt.Columns.Add("Stored", "StoredAt");
+
+            this.Controls.Add(this.tabControl);
+            this.ResumeLayout(false);
 
         }
 
