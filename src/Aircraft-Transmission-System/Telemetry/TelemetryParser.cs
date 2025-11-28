@@ -22,8 +22,8 @@ namespace AircraftTransmissionSystem.Telemetry
         /// <exception cref="ArgumentException">Thrown when the string format is invalid.</exception>
         public TelemetryData Parse(string telemetryString)
         {
-            // Split by comma and remove empty entries (handles trailing comma)
-            string[] parts = telemetryString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            // Split by comma, trim each entry, and remove empty entries (handles trailing comma and whitespace)
+            string[] parts = telemetryString.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             // Expected format: Timestamp, Accel-X, Accel-Y, Accel-Z, Weight, Altitude, Pitch, Bank (8 fields)
             if (parts.Length != 8)
@@ -39,14 +39,14 @@ namespace AircraftTransmissionSystem.Telemetry
                 // Parse all fields
                 var telemetryData = new TelemetryData
                 {
-                    Timestamp = parts[0].Trim(),
-                    AccelX = double.Parse(parts[1].Trim()),
-                    AccelY = double.Parse(parts[2].Trim()),
-                    AccelZ = double.Parse(parts[3].Trim()),
-                    Weight = double.Parse(parts[4].Trim()),
-                    Altitude = double.Parse(parts[5].Trim()),
-                    Pitch = double.Parse(parts[6].Trim()),
-                    Bank = double.Parse(parts[7].Trim())
+                    Timestamp = parts[0],
+                    AccelX = double.Parse(parts[1]),
+                    AccelY = double.Parse(parts[2]),
+                    AccelZ = double.Parse(parts[3]),
+                    Weight = double.Parse(parts[4]),
+                    Altitude = double.Parse(parts[5]),
+                    Pitch = double.Parse(parts[6]),
+                    Bank = double.Parse(parts[7])
                 };
 
                 return telemetryData;
