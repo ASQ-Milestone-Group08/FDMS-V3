@@ -1,3 +1,5 @@
+using AircraftTransmissionSystem.Telemetry;
+
 namespace AircraftTransmissionSystem.Packet
 {
     /// <summary>
@@ -7,6 +9,7 @@ namespace AircraftTransmissionSystem.Packet
     public class PacketBuilder(string aircraftTailNumber) : IPacketBuilder
     {
         // Fields
+        private readonly TelemetryParser telemetryParser = new TelemetryParser();
         private readonly ChecksumCalculator checksumCalculator = new ChecksumCalculator();
         private readonly string aircraftTailNumber = aircraftTailNumber;
 
@@ -16,7 +19,7 @@ namespace AircraftTransmissionSystem.Packet
         /// <param name="aircraftTelemetry">The aircraft telemetry data to include in the packet.</param>
         /// <param name="sequenceNumber">The sequence number for this packet (managed by TransmissionController).</param>
         /// <returns>A Packet instance containing the aircraft data, aircraft tail number, sequence number, and checksum.</returns>
-        /// <exception cref="ArgumentException">Thrown if aircraftTelemetry is null or empty.</exception>
+        /// <exception cref="ArgumentException">Thrown if aircraftTelemetry is null, empty, or invalid format.</exception>
         public Packet Build(string aircraftTelemetry, uint sequenceNumber)
         {
             if (string.IsNullOrEmpty(aircraftTelemetry))
@@ -24,10 +27,13 @@ namespace AircraftTransmissionSystem.Packet
                 throw new ArgumentException("Aircraft telemetry data cannot be empty.");
             }
 
-            // 1. Calculate checksum
-            int checksum = checksumCalculator.Calculate(aircraftTelemetry);
+            // 1. Parse telemetry string into structured data
+            TelemetryData parsedData = telemetryParser.Parse(aircraftTelemetry);
 
-            // 2. Build the packet
+            // 2. Calculate checksum using parsed values
+            int checksum = checksumCalculator.Calculate(parsedData.Altitude, parsedData.Pitch, parsedData.Bank);
+
+            // 3. Build the packet
             var packet = new Packet
             {
                 AircraftTailNumber = aircraftTailNumber,
