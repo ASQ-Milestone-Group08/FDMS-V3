@@ -292,6 +292,17 @@ namespace GroundTerminalSystem
             this.btnSearch.Text = "Search";
             this.btnSearch.Location = new System.Drawing.Point(sx + 460, sy + 20);
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+
+            //export button
+            // Export button
+            this.btnExport.Text = "Export";
+            this.btnExport.Location = new System.Drawing.Point(20, 550);
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+
+
+
+
+            
         }
 
         #endregion

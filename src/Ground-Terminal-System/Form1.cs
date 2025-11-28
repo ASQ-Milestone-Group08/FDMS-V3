@@ -241,5 +241,38 @@ namespace GroundTerminalSystem
         }//end btnSearch_Click
 
 
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if (dgvAlt.Rows.Count == 0)
+            {
+                MessageBox.Show("No results to export.");
+                return;
+            }
+
+            SaveFileDialog s = new SaveFileDialog
+            {
+                Filter = "Text File|*.txt"
+            };
+            if (s.ShowDialog() != DialogResult.OK)
+                return;
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (DataGridViewRow row in dgvAlt.Rows)
+            {
+                sb.AppendLine(string.Join(",",
+                    row.Cells[0].Value,
+                    row.Cells[1].Value,
+                    row.Cells[2].Value,
+                    row.Cells[3].Value,
+                    row.Cells[4].Value,
+                    row.Cells[5].Value));
+            }
+
+            File.WriteAllText(s.FileName, sb.ToString());
+            MessageBox.Show("Export complete.");
+        }//end btnExport_Click
+
+
     }//END class
 }//END namespace
