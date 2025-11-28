@@ -94,7 +94,6 @@ namespace GroundTerminalSystem
             this.dgvAlt = new System.Windows.Forms.DataGridView();
 
 
-
             //DISPLAY PROPERTIES
             //form
             this.SuspendLayout();
@@ -135,7 +134,6 @@ namespace GroundTerminalSystem
             this.panelLeft.Width = 350;
             this.panelLeft.MinimumSize = new System.Drawing.Size(50, 0);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
-
 
             //variables for layout
             int y = 20;
@@ -261,6 +259,34 @@ namespace GroundTerminalSystem
             //SEARCH TAB
             this.tabSearch.Text = "Search Database";
             this.tabSearch.BackColor = System.Drawing.Color.WhiteSmoke;
+
+            int sx = 20;
+            int sy = 20;
+
+            //search tail
+            this.lblSearchTail.Text = "Tail #:";
+            this.lblSearchTail.Location = new System.Drawing.Point(sx, sy);
+            this.lblSearchTail.AutoSize = true;
+            this.txtSearchTail.Location = new System.Drawing.Point(sx + 80, sy - 3);
+            this.txtSearchTail.Width = 100;
+            //search parameter
+            this.lblParam.Text = "Parameter:";
+            this.lblParam.Location = new System.Drawing.Point(sx + 200, sy);
+            this.lblParam.AutoSize = true;
+            this.cmbParameter.Location = new System.Drawing.Point(sx + 280, sy - 3);
+            this.cmbParameter.Width = 150;
+            //search start date
+            this.lblStart.Text = "Start Date:";
+            this.lblStart.Location = new System.Drawing.Point(sx, sy + 45);
+            this.lblStart.AutoSize = true;
+            this.dtStart.Location = new System.Drawing.Point(sx + 80, sy + 40);
+            this.dtStart.Width = 150;
+            //search end date
+            this.lblEnd.Text = "End Date:";
+            this.lblEnd.Location = new System.Drawing.Point(sx + 250, sy + 45);
+            this.lblEnd.AutoSize = true;
+            this.dtEnd.Location = new System.Drawing.Point(sx + 280, sy + 40);
+            this.dtEnd.Width = 150;
 
         }
 
