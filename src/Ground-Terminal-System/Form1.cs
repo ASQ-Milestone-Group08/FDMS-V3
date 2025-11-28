@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Data.Sqlite;
-using System.Linq;
-using System.Drawing;
 using System.Windows.Forms.DataVisualization.Charting;
+
 
 
 namespace GroundTerminalSystem
@@ -33,10 +34,10 @@ namespace GroundTerminalSystem
 
     public partial class Form1 : Form
     {
-       
         private CancellationTokenSource simSource;
-        private readonly string dbPath = "FDMS_DB";
- 
+        private readonly string connectionString =
+            "Server=fdms-server.database.windows.net; Database=FDMS_DB; User Id=FDMS-Admin; Password=VeryStrongPW##++;";
+
         public Form1()
         {
             InitializeComponent();
@@ -149,12 +150,12 @@ namespace GroundTerminalSystem
         private void UpdateRealTimeUI(Telemetry t)
         {
             //textboxes
-            txtTail.Text = t.Tail;
-            txtTimestamp.Text = t.Time.ToString("HH:mm:ss");
-            txtAltitude.Text = t.Altitude.ToString("F0");
-            txtWeight.Text = t.Weight.ToString("F2");
-            txtPitch.Text = t.Pitch.ToString("F4");
-            txtBank.Text = t.Bank.ToString("F4");
+            lblTailValue.Text = t.Tail;
+            lblTimestampValue.Text = t.Time.ToString("HH:mm:ss");
+            lblAltitudeValue.Text = t.Altitude.ToString("F0");
+            lblWeightValue.Text = t.Weight.ToString("F2");
+            lblPitchValue.Text = t.Pitch.ToString("F4");
+            lblBankValue.Text = t.Bank.ToString("F4");
 
             //charts
             //altitude chart limit to last 40 points
@@ -177,34 +178,184 @@ namespace GroundTerminalSystem
             }
         }//end UpdateRealTimeUI
 
+        private void InitializeDatabase()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Database connection failed:\n" + ex.Message);
+            }
+        }
+
 
         private void InsertTelemetry(Telemetry t)
         {
-            using var con = new SqliteConnection($"Data Source={dbPath}");
-            con.Open();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
 
-            string q = @"
-            INSERT INTO Telemetry
-            (Tail, TS, AccX, AccY, AccZ, Weight, Alt, Pitch, Bank, Stored)
-            VALUES ($tail, $ts, $x, $y, $z, $w, $a, $p, $b, $stored);";
+                // Insert into AltitudeData table
+                string sqlAlt = @"
+                INSERT INTO AltitudeData
+                    (AircraftTailNumber, TimeOfRecording, TimeReceived, Altitude, Pitch, Bank)
+                VALUES
+                    (@tail, @tRec, @tRecv, @alt, @pitch, @bank);";
 
-            using var cmd = new SqliteCommand(q, con);
-            cmd.Parameters.AddWithValue("$tail", t.Tail);
-            cmd.Parameters.AddWithValue("$ts", t.Time.ToString("o"));
-            cmd.Parameters.AddWithValue("$x", t.AccX);
-            cmd.Parameters.AddWithValue("$y", t.AccY);
-            cmd.Parameters.AddWithValue("$z", t.AccZ);
-            cmd.Parameters.AddWithValue("$w", t.Weight);
-            cmd.Parameters.AddWithValue("$a", t.Altitude);
-            cmd.Parameters.AddWithValue("$p", t.Pitch);
-            cmd.Parameters.AddWithValue("$b", t.Bank);
-            cmd.Parameters.AddWithValue("$stored", DateTime.Now.ToString("o"));
+                using (SqlCommand cmd = new SqlCommand(sqlAlt, conn))
+                {
+                    cmd.Parameters.AddWithValue("@tail", t.Tail);
+                    cmd.Parameters.AddWithValue("@tRec", t.Time);
+                    cmd.Parameters.AddWithValue("@tRecv", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@alt", t.Altitude);
+                    cmd.Parameters.AddWithValue("@pitch", t.Pitch);
+                    cmd.Parameters.AddWithValue("@bank", t.Bank);
+                    cmd.ExecuteNonQuery();
+                }
 
-            cmd.ExecuteNonQuery();
+                // Insert into GForceData table
+                string sqlG = @"
+                INSERT INTO GForceData
+                    (AircraftTailNumber, TimeOfRecording, TimeReceived, AccelerationX, AccelerationY, AccelerationZ, Weight)
+                VALUES
+                    (@tail, @tRec, @tRecv, @x, @y, @z, @w);";
+
+                using (SqlCommand cmd2 = new SqlCommand(sqlG, conn))
+                {
+                    cmd2.Parameters.AddWithValue("@tail", t.Tail);
+                    cmd2.Parameters.AddWithValue("@tRec", t.Time);
+                    cmd2.Parameters.AddWithValue("@tRecv", DateTime.Now);
+                    cmd2.Parameters.AddWithValue("@x", t.AccX);
+                    cmd2.Parameters.AddWithValue("@y", t.AccY);
+                    cmd2.Parameters.AddWithValue("@z", t.AccZ);
+                    cmd2.Parameters.AddWithValue("@w", t.Weight);
+                    cmd2.ExecuteNonQuery();
+                }
+            }
         }//end InsertTelemetry
 
 
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string tail = txtSearchTail.Text.Trim();
+            DateTime start = dtStart.Value.Date;
+            DateTime end = dtEnd.Value.Date.AddDays(1).AddSeconds(-1);
+
+            if (tail == "")
+            {
+                MessageBox.Show("Please enter a tail number.");
+                return;
+            }
+
+            dgvG.Rows.Clear();
+            dgvAlt.Rows.Clear();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                //altitude search
+                string sqlAlt = @"
+                SELECT TimeOfRecording, Altitude, Pitch, Bank, 0 AS Weight, TimeReceived
+                FROM AltitudeData
+                WHERE AircraftTailNumber = @tail
+                AND TimeOfRecording BETWEEN @start AND @end
+                ORDER BY TimeOfRecording ASC;";
+
+                using (SqlCommand cmdAlt = new SqlCommand(sqlAlt, conn))
+                {
+                    cmdAlt.Parameters.AddWithValue("@tail", tail);
+                    cmdAlt.Parameters.AddWithValue("@start", start);
+                    cmdAlt.Parameters.AddWithValue("@end", end);
+
+                    using (SqlDataReader r = cmdAlt.ExecuteReader())
+                    {
+                        while (r.Read())
+                        {
+                            dgvAlt.Rows.Add(
+                                r["TimeOfRecording"],
+                                r["Altitude"],
+                                r["Pitch"],
+                                r["Bank"],
+                                r["Weight"], 
+                                r["TimeReceived"]
+                            );
+                        }
+                    }
+                }
+
+                //g-force search
+                string sqlG = @"
+                SELECT TimeOfRecording, AccelerationX, AccelerationY, AccelerationZ, Weight, TimeReceived
+                FROM GForceData
+                WHERE AircraftTailNumber = @tail
+                AND TimeOfRecording BETWEEN @start AND @end
+                ORDER BY TimeOfRecording ASC;";
+
+                using (SqlCommand cmdG = new SqlCommand(sqlG, conn))
+                {
+                    cmdG.Parameters.AddWithValue("@tail", tail);
+                    cmdG.Parameters.AddWithValue("@start", start);
+                    cmdG.Parameters.AddWithValue("@end", end);
+
+                    using (SqlDataReader r = cmdG.ExecuteReader())
+                    {
+                        while (r.Read())
+                        {
+                            dgvG.Rows.Add(
+                                r["TimeOfRecording"],
+                                r["AccelerationX"],
+                                r["AccelerationY"],
+                                r["AccelerationZ"],
+                                r["Weight"],
+                                r["TimeReceived"]
+                            );
+                        }
+                    }
+                }
+            }//end using SqlConnection
+        }//end btnSearch_Click
+
+
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if (dgvAlt.Rows.Count == 0)
+            {
+                MessageBox.Show("No results to export.");
+                return;
+            }
+
+            SaveFileDialog s = new SaveFileDialog
+            {
+                Filter = "Text File|*.txt"
+            };
+            if (s.ShowDialog() != DialogResult.OK)
+                return;
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (DataGridViewRow row in dgvAlt.Rows)
+            {
+                sb.AppendLine(string.Join(",",
+                    row.Cells[0].Value,
+                    row.Cells[1].Value,
+                    row.Cells[2].Value,
+                    row.Cells[3].Value,
+                    row.Cells[4].Value,
+                    row.Cells[5].Value));
+            }
+
+            File.WriteAllText(s.FileName, sb.ToString());
+            MessageBox.Show("Export complete.");
+        }//end btnExport_Click
+
+
     }//END class
-
-
 }//END namespace
