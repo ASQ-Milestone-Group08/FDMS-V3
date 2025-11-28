@@ -23,7 +23,7 @@ namespace GroundTerminalSystem
                 }
 
                 string tailNumber = segments[0];
-                string sequence = segments[1];
+                int sequence = int.Parse(segments[1]);
                 string body = segments[2];
                 int receivedChecksum = int.Parse(segments[3]);
 
@@ -35,22 +35,32 @@ namespace GroundTerminalSystem
                     return false;
                 }
 
+                // Extract values in groups
+                var gForce = ExtractGForce(values);
+                var attitude = ExtractAttitude(values);
+
                 // Build telemetry data object
-                var data = new TelemetryData
+                result = new TelemetryData
                 {
-                    Timestamp = values[0],
-                    AccelX = double.Parse(values[1]),
-                    AccelY = double.Parse(values[2]),
-                    AccelZ = double.Parse(values[3]),
-                    Weight = double.Parse(values[4]),
-                    Altitude = double.Parse(values[5]),
-                    Pitch = double.Parse(values[6]),
-                    Bank = double.Parse(values[7]),
+                    TailNumber = tailNumber,
+                    Sequence = sequence,
+                    TimeOfRecording = values[0],
+                    TimeReceived = DateTime.Now,
+
+                    AccelX = gForce.AccelX,
+                    AccelY = gForce.AccelY,
+                    AccelZ = gForce.AccelZ,
+                    Weight = gForce.Weight,
+
+                    Altitude = attitude.Altitude,
+                    Pitch = attitude.Pitch,
+                    Bank = attitude.Bank,
+
                     Checksum = receivedChecksum
                 };
 
                 // Validate checksum according to APPENDIX C
-                bool valid = _validator.Validate(data.Altitude, data.Pitch, data.Bank, receivedChecksum);
+                bool valid = _validator.Validate(result.Altitude, result.Pitch, result.Bank, receivedChecksum);
 
                 if (!valid)
                 {
@@ -58,7 +68,6 @@ namespace GroundTerminalSystem
                     return false;
                 }
 
-                result = data;
                 return true;
             }
             catch (Exception e)
@@ -66,6 +75,27 @@ namespace GroundTerminalSystem
                 System.Diagnostics.Debug.WriteLine($"PacketParser Exception: {e.Message}");
                 return false;
             }
+        }
+
+        // Extract G-Force values
+        private (double AccelX, double AccelY, double AccelZ, double Weight) ExtractGForce(string[] values)
+        {
+            return (
+                AccelX: double.Parse(values[1]),
+                AccelY: double.Parse(values[2]),
+                AccelZ: double.Parse(values[3]),
+                Weight: double.Parse(values[4])
+            );
+        }
+
+        // Extract Attitude values
+        private (double Altitude, double Pitch, double Bank) ExtractAttitude(string[] values)
+        {
+            return (
+                Altitude: double.Parse(values[5]),
+                Pitch: double.Parse(values[6]),
+                Bank: double.Parse(values[7])
+            );
         }
     }
 }
