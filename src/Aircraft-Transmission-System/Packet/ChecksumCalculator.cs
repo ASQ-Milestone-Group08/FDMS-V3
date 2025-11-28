@@ -1,3 +1,10 @@
+/*
+ * File Name    : CheckSumCalculator.cs
+ * Description  : This is the implementation of the checksum calculation algorithm.
+ *               It simply computes the checksum based on altitude, pitch, and bank values
+ * Author       : Hassan Alqhwaizi
+ * Last Modified: November 28, 2025
+ */
 namespace AircraftTransmissionSystem.Packet
 {
     /// <summary>

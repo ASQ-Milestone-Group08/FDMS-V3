@@ -1,3 +1,10 @@
+/*
+ * File Name    : Packet.cs
+ * Description  : This is the form of data packet containing 
+ *               all necessary information for communication with Ground Terminal.
+ * Author       : Hassan Alqhwaizi
+ * Last Modified: November 28, 2025
+ */
 namespace AircraftTransmissionSystem.Packet
 {
     /// <summary>

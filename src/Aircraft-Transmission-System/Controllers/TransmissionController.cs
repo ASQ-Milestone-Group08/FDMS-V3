@@ -1,3 +1,11 @@
+/*
+ * File Name    : TransmissionController.cs
+ * Description  : Main controller for the Aircraft Transmission System
+ *               It orchestrates reading telemetry data, building packets, and transmitting them to the Ground Terminal.
+ *               All meaninful logs are recorded by the logger in both console and log file.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
 using System.Timers;
 using AircraftTransmissionSystem.Network;
 using AircraftTransmissionSystem.Logging;
