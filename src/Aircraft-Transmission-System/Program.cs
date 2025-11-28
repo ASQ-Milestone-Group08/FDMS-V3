@@ -2,6 +2,7 @@ using AircraftTransmissionSystem.Controllers;
 using AircraftTransmissionSystem.Logging;
 using AircraftTransmissionSystem.Network;
 using AircraftTransmissionSystem.Telemetry;
+using AircraftTransmissionSystem.Packet;
 using System.Text.Json;
 
 namespace AircraftTransmissionSystem
@@ -119,14 +120,19 @@ namespace AircraftTransmissionSystem
                 Console.WriteLine("Initializing telemetry data source...");
                 ITelemetrySource dataSource = new FileTelemetryReader(selectedAircraft);
 
+                Console.WriteLine("Initializing packet builder...");
+                // Convert Aircraft enum to tail number string (C_FGAX -> C-FGAX)
+                string aircraftTailNumber = selectedAircraft.ToString().Replace('_', '-');
+                IPacketBuilder packetBuilder = new PacketBuilder(aircraftTailNumber);
+
                 Console.WriteLine("Initializing network client...");
                 INetworkClient networkClient = new NetworkClient(networkHost, networkPort);
 
                 // Create and start transmission controller
-                // Note: Packet builder and checksum calculator will be integrated by another team member
                 Console.WriteLine("Creating transmission controller...");
                 TransmissionController controller = new TransmissionController(
                     dataSource,
+                    packetBuilder,
                     networkClient,
                     logger
                 );

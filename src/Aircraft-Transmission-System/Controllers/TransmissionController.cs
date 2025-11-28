@@ -2,6 +2,7 @@ using System.Timers;
 using AircraftTransmissionSystem.Network;
 using AircraftTransmissionSystem.Logging;
 using AircraftTransmissionSystem.Telemetry;
+using AircraftTransmissionSystem.Packet;
 
 namespace AircraftTransmissionSystem.Controllers
 {
@@ -12,11 +13,12 @@ namespace AircraftTransmissionSystem.Controllers
     /// </summary>
     public class TransmissionController
     {
-        private readonly ITelemetrySource dataSource;   // Interface for telemetry data 
+        private readonly ITelemetrySource dataSource;   // Interface for telemetry data
+        private readonly IPacketBuilder packetBuilder;  // Interface for packet building
         private readonly INetworkClient networkClient;  // Interface for TCP/IP network client
         private readonly ILogger logger;                // Interface for logging
-        private System.Timers.Timer? transmissionTimer; // 
-        private int sequenceNumber;                     // Unique number of each packet
+        private System.Timers.Timer? transmissionTimer; // Timer for 1-second intervals
+        private uint sequenceNumber;                    // Unique number of each packet
         private bool isRunning;                         // Flag for system running
 
         /// <summary>
@@ -25,6 +27,7 @@ namespace AircraftTransmissionSystem.Controllers
         ///              Uses dependency injection for all required components.
         /// Parameters:
         ///   - dataSource (ITelemetrySource): The telemetry data source
+        ///   - packetBuilder (IPacketBuilder): The packet builder for creating telemetry packets
         ///   - networkClient (INetworkClient): The network client for transmission
         ///   - logger (ILogger): The logger for recording events
         /// Return Type: N/A (Constructor)
@@ -32,16 +35,19 @@ namespace AircraftTransmissionSystem.Controllers
         ///   - ArgumentNullException: Thrown when any parameter is null
         /// </summary>
         /// <param name="dataSource">The telemetry data source.</param>
+        /// <param name="packetBuilder">The packet builder.</param>
         /// <param name="networkClient">The network client.</param>
         /// <param name="logger">The logger.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public TransmissionController(
             ITelemetrySource dataSource,
+            IPacketBuilder packetBuilder,
             INetworkClient networkClient,
             ILogger logger)
         {
             // Null exception checks for dependencies
             this.dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+            this.packetBuilder = packetBuilder ?? throw new ArgumentNullException(nameof(packetBuilder));
             this.networkClient = networkClient ?? throw new ArgumentNullException(nameof(networkClient));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -144,9 +150,9 @@ namespace AircraftTransmissionSystem.Controllers
         /// <summary>
         /// Function Name: OnTick
         /// Description: Executes one transmission cycle.
-        ///              Flow: Read telemetry → Send to Ground Terminal
+        ///              Flow: Read telemetry → Build packet → Send to Ground Terminal
         ///              Handles end-of-file gracefully by stopping transmission.
-        ///              Note: Packet building and checksum calculation will be done by another team member.
+        ///              Implements REQ-FN-090: Packetize, calculate checksum, and transmit.
         /// Parameters: None
         /// Return Type: void
         /// </summary>
@@ -171,17 +177,23 @@ namespace AircraftTransmissionSystem.Controllers
                     return;
                 }
 
-                // Transmit to Ground Terminal
-                bool success = this.networkClient.SendData(telemetryData, this.sequenceNumber);
+                // Build packet with sequence number (REQ-FN-090: Packetize and calculate checksum)
+                Packet.Packet packet = this.packetBuilder.Build(telemetryData, this.sequenceNumber);
+
+                // Serialize packet to string format: TailNumber|SequenceNumber|Telemetry|Checksum
+                string packetData = $"{packet.AircraftTailNumber}|{packet.PacketSequenceNumber}|{packet.AircraftTelemetry}|{packet.Checksum}";
+
+                // Transmit to Ground Terminal (REQ-FN-090: Transmit the packet)
+                bool success = this.networkClient.SendData(packetData, (int)this.sequenceNumber);
 
                 if (success)
                 {
-                    this.logger.LogInfo($"Data #{this.sequenceNumber} transmitted successfully.");
+                    this.logger.LogInfo($"Packet #{this.sequenceNumber} transmitted successfully. Checksum: {packet.Checksum}");
                     this.sequenceNumber++; // Increment sequence number for next transmission
                 }
                 else
                 {
-                    this.logger.LogError($"Failed to transmit data #{this.sequenceNumber}.");
+                    this.logger.LogError($"Failed to transmit packet #{this.sequenceNumber}.");
                 }
             }
             catch (Exception ex)
