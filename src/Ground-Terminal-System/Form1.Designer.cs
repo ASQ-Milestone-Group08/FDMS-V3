@@ -222,6 +222,21 @@ namespace GroundTerminalSystem
                 this.btnStart, this.btnStop
             });
 
+            // DEBUG LOG WINDOW
+            this.txtDebug = new System.Windows.Forms.TextBox();
+            this.txtDebug.Multiline = true;
+            this.txtDebug.ScrollBars = ScrollBars.Vertical;
+            this.txtDebug.Dock = DockStyle.Bottom;
+            this.txtDebug.Height = 120;
+            this.txtDebug.Font = new Font("Consolas", 9F, FontStyle.Regular);
+            this.txtDebug.BackColor = Color.Black;
+            this.txtDebug.ForeColor = Color.Lime;
+            this.txtDebug.ReadOnly = true;
+
+            // Add debug box to monitoring tab
+            this.tabMonitoring.Controls.Add(this.txtDebug);
+
+
             // ==========================
             // NEW STABLE CHART LAYOUT
             // ==========================
@@ -322,13 +337,13 @@ namespace GroundTerminalSystem
             this.btnSearch.Text = "Search";
             this.btnSearch.Location = new System.Drawing.Point(sx + 500, sy + 20);
             this.btnSearch.Height = 50;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            //this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
 
             //export button
             this.btnExport.Text = "Export";
             this.btnExport.Location = new System.Drawing.Point(20, 550);
             this.btnExport.Height = 50;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            //this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
 
 
             //control layout in search mode
@@ -425,5 +440,8 @@ namespace GroundTerminalSystem
         //data grids
         private System.Windows.Forms.DataGridView dgvG;
         private System.Windows.Forms.DataGridView dgvAlt;
+        //debug
+        private System.Windows.Forms.TextBox txtDebug;
+
     }
 }
