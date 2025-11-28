@@ -294,15 +294,25 @@ namespace GroundTerminalSystem
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
 
             //export button
-            // Export button
             this.btnExport.Text = "Export";
             this.btnExport.Location = new System.Drawing.Point(20, 550);
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
 
 
+            //control layout in search mode
+            this.tabSearch.Controls.AddRange(new System.Windows.Forms.Control[]
+            {
+                this.lblSearchTail, this.txtSearchTail,
+                this.lblParam, this.cmbParameter,
+                this.lblStart, this.dtStart,
+                this.lblEnd, this.dtEnd,
+                this.btnSearch,
+                this.dgvG, this.dgvAlt,
+                this.btnExport
+            });
 
 
-            
+
         }
 
         #endregion
