@@ -202,10 +202,10 @@ namespace GroundTerminalSystem
 
                 // Insert into AltitudeData table
                 string sqlAlt = @"
-INSERT INTO AltitudeData
-    (AircraftTailNumber, TimeOfRecording, TimeReceived, Altitude, Pitch, Bank)
-VALUES
-    (@tail, @tRec, @tRecv, @alt, @pitch, @bank);";
+                INSERT INTO AltitudeData
+                    (AircraftTailNumber, TimeOfRecording, TimeReceived, Altitude, Pitch, Bank)
+                VALUES
+                    (@tail, @tRec, @tRecv, @alt, @pitch, @bank);";
 
                 using (SqlCommand cmd = new SqlCommand(sqlAlt, conn))
                 {
@@ -283,7 +283,7 @@ VALUES
                                 r["Altitude"],
                                 r["Pitch"],
                                 r["Bank"],
-                                r["Weight"],    // always 0 but OK for format
+                                r["Weight"], 
                                 r["TimeReceived"]
                             );
                         }

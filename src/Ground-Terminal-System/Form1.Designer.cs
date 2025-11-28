@@ -200,11 +200,13 @@ namespace GroundTerminalSystem
             this.btnStart.Text = "Start Real-Time";
             this.btnStart.Location = new System.Drawing.Point(20, y + 20);
             this.btnStart.Width = 130;
+            this.btnStart.Height = 50;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             //StopSim button
             this.btnStop.Text = "Stop Real-Time";
             this.btnStop.Location = new System.Drawing.Point(170, y + 20);
             this.btnStop.Width = 130;
+            this.btnStop.Height = 50;
             this.btnStop.Enabled = false;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
 
@@ -217,6 +219,7 @@ namespace GroundTerminalSystem
                 this.lblWeight, this.lblWeightValue,
                 this.lblPitch, this.lblPitchValue,
                 this.lblBank, this.lblBankValue,
+                this.btnStart, this.btnStop
             });
 
             // ==========================
@@ -310,19 +313,21 @@ namespace GroundTerminalSystem
             this.dtStart.Width = 150;
             //search end date
             this.lblEnd.Text = "End Date:";
-            this.lblEnd.Location = new System.Drawing.Point(sx + 250, sy + 45);
+            this.lblEnd.Location = new System.Drawing.Point(sx + 240, sy + 45);
             this.lblEnd.AutoSize = true;
-            this.dtEnd.Location = new System.Drawing.Point(sx + 280, sy + 40);
+            this.dtEnd.Location = new System.Drawing.Point(sx + 315, sy + 40);
             this.dtEnd.Width = 150;
 
             //search button
             this.btnSearch.Text = "Search";
-            this.btnSearch.Location = new System.Drawing.Point(sx + 460, sy + 20);
+            this.btnSearch.Location = new System.Drawing.Point(sx + 500, sy + 20);
+            this.btnSearch.Height = 50;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
 
             //export button
             this.btnExport.Text = "Export";
             this.btnExport.Location = new System.Drawing.Point(20, 550);
+            this.btnExport.Height = 50;
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
 
 
