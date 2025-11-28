@@ -33,10 +33,10 @@ namespace GroundTerminalSystem
 
     public partial class Form1 : Form
     {
-
+       
         private CancellationTokenSource simSource;
         private readonly string dbPath = "FDMS_DB";
-
+ 
         public Form1()
         {
             InitializeComponent();
@@ -116,7 +116,82 @@ namespace GroundTerminalSystem
             return (int)((t.Altitude + t.Pitch + t.Bank) / 3.0);
         }//end ComputeChecksum
 
+        private void ProcessTelemetry(Telemetry t, int checksumFromPacket)
+        {
+            int localCs = ComputeChecksum(t);
+            if (localCs != checksumFromPacket)
+            {
+                return;
+            }
+
+            InsertTelemetry(t);
+
+            if (toggleRT.Checked)
+            {
+                this.Invoke(new Action(() => UpdateRealTimeUI(t)));
+            }
+        }//end ProcessTelemetry
+
+
+        private void UpdateRealTimeUI(Telemetry t)
+        {
+            //textboxes
+            txtTail.Text = t.Tail;
+            txtTimestamp.Text = t.Time.ToString("HH:mm:ss");
+            txtAltitude.Text = t.Altitude.ToString("F0");
+            txtWeight.Text = t.Weight.ToString("F2");
+            txtPitch.Text = t.Pitch.ToString("F4");
+            txtBank.Text = t.Bank.ToString("F4");
+
+            //charts
+            //altitude chart limit to last 40 points
+            chartAltitude.Series[0].Points.AddY(t.Altitude);
+            if (chartAltitude.Series[0].Points.Count > 40)
+            {
+                chartAltitude.Series[0].Points.RemoveAt(0);
+            }
+
+            chartGforce.Series["Nx"].Points.AddY(t.AccX);
+            chartGforce.Series["Ny"].Points.AddY(t.AccY);
+            chartGforce.Series["Nz"].Points.AddY(t.AccZ);
+
+            //g-force chart limit to last 40 points
+            if (chartGforce.Series["Nx"].Points.Count > 40)
+            {
+                chartGforce.Series["Nx"].Points.RemoveAt(0);
+                chartGforce.Series["Ny"].Points.RemoveAt(0);
+                chartGforce.Series["Nz"].Points.RemoveAt(0);
+            }
+        }//end UpdateRealTimeUI
+
+
+        private void InsertTelemetry(Telemetry t)
+        {
+            using var con = new SqliteConnection($"Data Source={dbPath}");
+            con.Open();
+
+            string q = @"
+            INSERT INTO Telemetry
+            (Tail, TS, AccX, AccY, AccZ, Weight, Alt, Pitch, Bank, Stored)
+            VALUES ($tail, $ts, $x, $y, $z, $w, $a, $p, $b, $stored);";
+
+            using var cmd = new SqliteCommand(q, con);
+            cmd.Parameters.AddWithValue("$tail", t.Tail);
+            cmd.Parameters.AddWithValue("$ts", t.Time.ToString("o"));
+            cmd.Parameters.AddWithValue("$x", t.AccX);
+            cmd.Parameters.AddWithValue("$y", t.AccY);
+            cmd.Parameters.AddWithValue("$z", t.AccZ);
+            cmd.Parameters.AddWithValue("$w", t.Weight);
+            cmd.Parameters.AddWithValue("$a", t.Altitude);
+            cmd.Parameters.AddWithValue("$p", t.Pitch);
+            cmd.Parameters.AddWithValue("$b", t.Bank);
+            cmd.Parameters.AddWithValue("$stored", DateTime.Now.ToString("o"));
+
+            cmd.ExecuteNonQuery();
+        }//end InsertTelemetry
+
+
     }//END class
 
-    
+
 }//END namespace
