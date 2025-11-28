@@ -48,18 +48,29 @@ namespace GroundTerminalSystem
 
         private async Task ReadPacket(TcpClient client)
         {
-            using var stream = client.GetStream();
-            using var reader = new StreamReader(stream);
-
-            string packet = await reader.ReadLineAsync();
-
-            if (!string.IsNullOrEmpty(packet))
+            try
             {
-                PacketReceived?.Invoke(packet);
+                using var stream = client.GetStream();
+                using var reader = new StreamReader(stream);
+
+                // Keep reading packets from this client until connection closes
+                while (_isRunning && !reader.EndOfStream)
+                {
+                    string? packet = await reader.ReadLineAsync();
+
+                    if (!string.IsNullOrEmpty(packet))
+                    {
+                        PacketReceived?.Invoke(packet);
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                
+                System.Diagnostics.Debug.WriteLine($"HandleClient error: {ex.Message}");
+            }
+            finally
+            {
+                client?.Close();
             }
         }
 
