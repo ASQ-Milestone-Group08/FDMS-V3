@@ -1,3 +1,13 @@
+/*
+ * File Name    : NetworkClient.cs
+ * Description  : This class implements the INetworkClient interface using TCP/IP sockets.
+ *                It is designed to send telemetry data to the Ground Terminal over a network.
+ *                The data includes a sequence number for tracking transmissions.
+ *                The kinds of telemetry data are defined in the TelemetryData class.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
+
 using System.Net.Sockets;
 using System.Text;
 using AircraftTransmissionSystem.Logging;

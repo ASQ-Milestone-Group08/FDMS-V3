@@ -1,3 +1,9 @@
+/*
+ * File Name    : ITelemetrySource.cs
+ * Description  : This interface defines the contract for telemetry data sources.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
 namespace AircraftTransmissionSystem.Telemetry
 {
     /// <summary>

@@ -1,3 +1,12 @@
+/*
+ * File Name    : TelemetryParser.cs
+ * Description  : This class is responsible for parsing raw telemetry strings into structured TelemetryData objects.
+ *                It handles the comma-delimited format from telemetry files.
+ *                Also, it removes any whitespace and trailing commas before parsing.
+ *                All parsed fields are stored in the TelemetryData model.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
 namespace AircraftTransmissionSystem.Telemetry
 {
     /// <summary>

@@ -1,3 +1,9 @@
+/*
+ * File Name    : IPacketBuilder.cs
+ * Description  : This is the interface for building data packets from aircraft telemetry data. 
+ * Author       : Hassan Alqhwaizi
+ * Last Modified: November 28, 2025
+ */
 namespace AircraftTransmissionSystem.Packet
 {
     /// <summary>

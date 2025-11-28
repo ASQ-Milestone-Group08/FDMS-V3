@@ -1,3 +1,14 @@
+/*
+ * File Name    : Program.cs
+ * Description  : This is the main entry point for the Aircraft Transmission System console application.
+ *                The user is prompted to select an aircraft, and the system initializes all components.
+ *                The user has three aircraft options which are defined in the Aircraft enum.
+ *                The TCP/IP network client connects to the Ground Terminal using configuration from appsettings.json.
+ *                Finally, all meaningful logs are recorded by the logger in both console and log file.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
+
 using AircraftTransmissionSystem.Controllers;
 using AircraftTransmissionSystem.Logging;
 using AircraftTransmissionSystem.Network;

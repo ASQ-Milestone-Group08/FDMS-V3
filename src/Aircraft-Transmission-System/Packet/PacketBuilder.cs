@@ -1,3 +1,11 @@
+/*
+ * File Name    : PacketBuilder.cs
+ * Description  : This is the implementation of building data packets from aircraft telemetry data.
+ *                It builds a Packet object using the telemetry string and sequence number.
+ *                Checksum is calculated using ChecksumCalculator.
+ * Author       : Hassan Alqhwaizi
+ * Last Modified: November 28, 2025
+ */
 using AircraftTransmissionSystem.Telemetry;
 
 namespace AircraftTransmissionSystem.Packet

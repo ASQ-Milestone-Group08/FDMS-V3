@@ -1,3 +1,9 @@
+/*
+ * File Name    : ICheckSumCalculator.cs
+ * Description  : This is the interface for calculating checksum values from telemetry data.
+ * Author       : Hassan Alqhwaizi
+ * Last Modified: November 28, 2025
+ */
 namespace AircraftTransmissionSystem.Packet
 {
     /// <summary>

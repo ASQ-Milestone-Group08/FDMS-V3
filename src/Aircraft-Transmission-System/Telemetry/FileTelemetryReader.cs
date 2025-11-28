@@ -1,3 +1,12 @@
+/*
+ * File Name    : FileTelemetryReader.cs
+ * Description  : This is the implementation of reading telemetry data from ASCII text files.
+ *                It reads the path of the telemetry file from appsettings.json based on the aircraft type.
+ *                Once the file is opened, it reads one line at a time in APPENDIX D format.
+ *                Finally, it implements IDisposable to properly close the file when done.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
 using System.Text.Json;
 
 namespace AircraftTransmissionSystem.Telemetry

@@ -1,3 +1,13 @@
+/*
+ * File Name    : Logger.cs
+ * Description  : This logger class is designed to log system events and errors
+ *               in both console and a file.
+ *               It has three log levels: Info, Error, and Warning.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
+
+
 namespace AircraftTransmissionSystem.Logging
 {
     /// <summary>

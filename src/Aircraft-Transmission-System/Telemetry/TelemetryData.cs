@@ -1,3 +1,11 @@
+/*
+ * File Name    : TelemetryData.cs
+ * Description  : This is the data model representing parsed telemetry data from an aircraft.
+ *                It includes all telemetry fields extracted from a single line of telemetry data.
+ * Author       : Chris Park
+ * Last Modified: November 28, 2025
+ */
+
 namespace AircraftTransmissionSystem.Telemetry
 {
     /// <summary>
