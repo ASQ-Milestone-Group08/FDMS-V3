@@ -297,6 +297,11 @@ namespace GroundTerminalSystem
             this.lblParam.AutoSize = true;
             this.cmbParameter.Location = new System.Drawing.Point(sx + 280, sy - 3);
             this.cmbParameter.Width = 150;
+            //parameter dropdown items
+            this.cmbParameter.Items.Add("All");
+            this.cmbParameter.Items.Add("Altitude");
+            this.cmbParameter.Items.Add("G-Force");
+            this.cmbParameter.SelectedIndex = 0;
             //search start date
             this.lblStart.Text = "Start Date:";
             this.lblStart.Location = new System.Drawing.Point(sx, sy + 45);
