@@ -47,22 +47,22 @@ namespace GroundTerminalSystem
             this.panelLeft = new System.Windows.Forms.Panel();
             //tail #
             this.lblTail = new System.Windows.Forms.Label();
-            this.txtTail = new System.Windows.Forms.TextBox();
+            this.lblTailValue = new System.Windows.Forms.Label();
             //timestamp
             this.lblTimestamp = new System.Windows.Forms.Label();
-            this.txtTimestamp = new System.Windows.Forms.TextBox();
+            this.lblTimestampValue = new System.Windows.Forms.Label();
             //altitude
             this.lblAltitude = new System.Windows.Forms.Label();
-            this.txtAltitude = new System.Windows.Forms.TextBox();
+            this.lblAltitudeValue = new System.Windows.Forms.Label();
             //weight
             this.lblWeight = new System.Windows.Forms.Label();
-            this.txtWeight = new System.Windows.Forms.TextBox();
+            this.lblWeightValue = new System.Windows.Forms.Label();
             //pitch
             this.lblPitch = new System.Windows.Forms.Label();
-            this.txtPitch = new System.Windows.Forms.TextBox();
+            this.lblPitchValue = new System.Windows.Forms.Label();
             //bank
             this.lblBank = new System.Windows.Forms.Label();
-            this.txtBank = new System.Windows.Forms.TextBox();
+            this.lblBankValue = new System.Windows.Forms.Label();
 
             //start/stop buttons
             this.btnStart = new System.Windows.Forms.Button();
@@ -144,54 +144,56 @@ namespace GroundTerminalSystem
             int w = 180;
             int h = 26;
             int gap = 40;
+            Font valueFont = new Font("Segoe UI", 10F, FontStyle.Bold);
+
 
             //tail
             this.lblTail.Text = "Tail #:";
             this.lblTail.Location = new System.Drawing.Point(labelX, y);
             this.lblTail.AutoSize = true;
-            this.txtTail.Location = new System.Drawing.Point(boxX, y - 4);
-            this.txtTail.Width = w;
-            this.txtTail.ReadOnly = true;
+            this.lblTailValue.Location = new Point(boxX, y);
+            this.lblTailValue.Width = w;
+            this.lblTailValue.Font = valueFont;
             y += gap;
             //timestamp
             this.lblTimestamp.Text = "Timestamp:";
             this.lblTimestamp.Location = new System.Drawing.Point(labelX, y);
             this.lblTimestamp.AutoSize = true;
-            this.txtTimestamp.Location = new System.Drawing.Point(boxX, y - 4);
-            this.txtTimestamp.Width = w;
-            this.txtTimestamp.ReadOnly = true;
+            this.lblTimestampValue.Location = new Point(boxX, y);
+            this.lblTimestampValue.Width = w;
+            this.lblTimestampValue.Font = valueFont;
             y += gap;
             //altitude
             this.lblAltitude.Text = "Altitude:";
             this.lblAltitude.Location = new System.Drawing.Point(labelX, y);
             this.lblAltitude.AutoSize = true;
-            this.txtAltitude.Location = new System.Drawing.Point(boxX, y - 4);
-            this.txtAltitude.Width = w;
-            this.txtAltitude.ReadOnly = true;
+            this.lblAltitudeValue.Location = new Point(boxX, y);
+            this.lblAltitudeValue.Width = w;
+            this.lblAltitudeValue.Font = valueFont;
             y += gap;
             //weight
             this.lblWeight.Text = "Weight (kg):";
             this.lblWeight.Location = new System.Drawing.Point(labelX, y);
             this.lblWeight.AutoSize = true;
-            this.txtWeight.Location = new System.Drawing.Point(boxX, y - 4);
-            this.txtWeight.Width = w;
-            this.txtWeight.ReadOnly = true;
+            this.lblWeightValue.Location = new Point(boxX, y);
+            this.lblWeightValue.Width = w;
+            this.lblWeightValue.Font = valueFont;
             y += gap;
             //pitch
             this.lblPitch.Text = "Pitch:";
             this.lblPitch.Location = new System.Drawing.Point(labelX, y);
             this.lblPitch.AutoSize = true;
-            this.txtPitch.Location = new System.Drawing.Point(boxX, y - 4);
-            this.txtPitch.Width = w;
-            this.txtPitch.ReadOnly = true;
+            this.lblPitchValue.Location = new Point(boxX, y);
+            this.lblPitchValue.Width = w;
+            this.lblPitchValue.Font = valueFont;
             y += gap;
             //bank
             this.lblBank.Text = "Bank:";
             this.lblBank.Location = new System.Drawing.Point(labelX, y);
             this.lblBank.AutoSize = true;
-            this.txtBank.Location = new System.Drawing.Point(boxX, y - 4);
-            this.txtBank.Width = w;
-            this.txtBank.ReadOnly = true;
+            this.lblBankValue.Location = new Point(boxX, y);
+            this.lblBankValue.Width = w;
+            this.lblBankValue.Font = valueFont;
             y += gap;
 
             //StartSim button
@@ -209,13 +211,12 @@ namespace GroundTerminalSystem
             //control layout of the telemetry panel
             this.panelLeft.Controls.AddRange(new System.Windows.Forms.Control[]
             {
-                this.lblTail, this.txtTail,
-                this.lblTimestamp, this.txtTimestamp,
-                this.lblAltitude, this.txtAltitude,
-                this.lblWeight, this.txtWeight,
-                this.lblPitch, this.txtPitch,
-                this.lblBank, this.txtBank,
-                this.btnStart, this.btnStop
+                this.lblTail, this.lblTailValue,
+                this.lblTimestamp, this.lblTimestampValue,
+                this.lblAltitude, this.lblAltitudeValue,
+                this.lblWeight, this.lblWeightValue,
+                this.lblPitch, this.lblPitchValue,
+                this.lblBank, this.lblBankValue,
             });
 
             // ==========================
@@ -383,13 +384,13 @@ namespace GroundTerminalSystem
         private System.Windows.Forms.Label lblWeight;
         private System.Windows.Forms.Label lblPitch;
         private System.Windows.Forms.Label lblBank;
-        //telemetry data textboxes
-        private System.Windows.Forms.TextBox txtTail;
-        private System.Windows.Forms.TextBox txtTimestamp;
-        private System.Windows.Forms.TextBox txtAltitude;
-        private System.Windows.Forms.TextBox txtWeight;
-        private System.Windows.Forms.TextBox txtPitch;
-        private System.Windows.Forms.TextBox txtBank;
+        //telemetry data labels values
+        private System.Windows.Forms.Label lblTailValue;
+        private System.Windows.Forms.Label lblTimestampValue;
+        private System.Windows.Forms.Label lblAltitudeValue;
+        private System.Windows.Forms.Label lblWeightValue;
+        private System.Windows.Forms.Label lblPitchValue;
+        private System.Windows.Forms.Label lblBankValue;
         //buttons
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnStop;
