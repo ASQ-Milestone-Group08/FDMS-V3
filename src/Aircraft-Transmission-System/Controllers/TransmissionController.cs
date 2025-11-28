@@ -177,13 +177,13 @@ namespace AircraftTransmissionSystem.Controllers
                     return;
                 }
 
-                // Build packet with sequence number (REQ-FN-090: Packetize and calculate checksum)
+                // Build packet with sequence number 
                 Packet.Packet packet = this.packetBuilder.Build(telemetryData, this.sequenceNumber);
 
                 // Serialize packet to string format: TailNumber|SequenceNumber|Telemetry|Checksum
                 string packetData = $"{packet.AircraftTailNumber}|{packet.PacketSequenceNumber}|{packet.AircraftTelemetry}|{packet.Checksum}";
 
-                // Transmit to Ground Terminal (REQ-FN-090: Transmit the packet)
+                // Transmit to Ground Terminal
                 bool success = this.networkClient.SendData(packetData, (int)this.sequenceNumber);
 
                 if (success)

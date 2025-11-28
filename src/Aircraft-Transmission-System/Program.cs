@@ -117,19 +117,19 @@ namespace AircraftTransmissionSystem
                 Console.WriteLine("Initializing logger...");
                 ILogger logger = new Logger(logFilePath);
 
-                Console.WriteLine("Initializing telemetry data source...");
+                logger.LogInfo("Initializing telemetry data source...");
                 ITelemetrySource dataSource = new FileTelemetryReader(selectedAircraft);
 
-                Console.WriteLine("Initializing packet builder...");
+                logger.LogInfo("Initializing packet builder...");
                 // Convert Aircraft enum to tail number string (C_FGAX -> C-FGAX)
                 string aircraftTailNumber = selectedAircraft.ToString().Replace('_', '-');
                 IPacketBuilder packetBuilder = new PacketBuilder(aircraftTailNumber);
 
-                Console.WriteLine("Initializing network client...");
-                INetworkClient networkClient = new NetworkClient(networkHost, networkPort);
+                logger.LogInfo("Initializing network client...");
+                INetworkClient networkClient = new NetworkClient(networkHost, networkPort, logger);
 
                 // Create and start transmission controller
-                Console.WriteLine("Creating transmission controller...");
+                logger.LogInfo("Creating transmission controller...");
                 TransmissionController controller = new TransmissionController(
                     dataSource,
                     packetBuilder,
@@ -137,7 +137,7 @@ namespace AircraftTransmissionSystem
                     logger
                 );
 
-                Console.WriteLine("Starting transmission...");
+                logger.LogInfo("Starting transmission...");
                 Console.WriteLine("Press any key to stop transmission.");
                 Console.WriteLine();
 
@@ -161,6 +161,7 @@ namespace AircraftTransmissionSystem
             }
             catch (Exception ex)
             {
+                // Logger might not be available in catch block, use Console
                 Console.WriteLine($"FATAL ERROR: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
             }

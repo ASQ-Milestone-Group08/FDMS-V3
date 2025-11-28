@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using System.Text;
+using AircraftTransmissionSystem.Logging;
 
 namespace AircraftTransmissionSystem.Network
 {
@@ -9,8 +10,9 @@ namespace AircraftTransmissionSystem.Network
     /// </summary>
     public class NetworkClient : INetworkClient
     {
-        private readonly string host; // Ground Terminal host address (IP Address)
-        private readonly int port;    // Ground Terminal port number
+        private readonly string host;   // Ground Terminal host address (IP Address)
+        private readonly int port;      // Ground Terminal port number
+        private readonly ILogger logger; // Logger for network operations
 
         private TcpClient? tcpClient;
         private NetworkStream? networkStream;
@@ -29,16 +31,18 @@ namespace AircraftTransmissionSystem.Network
         /// Parameters:
         ///   - host (string): The Ground Terminal host address (e.g., "127.0.0.1")
         ///   - port (int): The Ground Terminal port number (e.g., 5000)
+        ///   - logger (ILogger): The logger for recording network operations
         /// Return Type: N/A (Constructor)
         /// Exceptions:
-        ///   - ArgumentNullException: Thrown when host is null or empty
+        ///   - ArgumentNullException: Thrown when host is null or empty, or logger is null
         ///   - ArgumentOutOfRangeException: Thrown when port is out of valid range
         /// </summary>
         /// <param name="host">The Ground Terminal host address.</param>
         /// <param name="port">The Ground Terminal port number.</param>
-        /// <exception cref="ArgumentNullException">Thrown when host is null or empty.</exception>
+        /// <param name="logger">The logger for network operations.</param>
+        /// <exception cref="ArgumentNullException">Thrown when host or logger is null or empty.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when port is out of valid range (1-65535).</exception>
-        public NetworkClient(string host, int port)
+        public NetworkClient(string host, int port, ILogger logger)
         {
             if (string.IsNullOrWhiteSpace(host))
             {
@@ -53,6 +57,7 @@ namespace AircraftTransmissionSystem.Network
             // Initialize fields
             this.host = host;
             this.port = port;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.isConnected = false;
         }
 
@@ -68,7 +73,7 @@ namespace AircraftTransmissionSystem.Network
         {
             try
             {
-                Console.WriteLine($"[NetworkClient] Connecting to Ground Terminal at {this.host}:{this.port}...");
+                this.logger.LogInfo($"[NetworkClient] Connecting to Ground Terminal at {this.host}:{this.port}...");
 
                 // Create and connect TCP client
                 this.tcpClient = new TcpClient();
@@ -78,18 +83,18 @@ namespace AircraftTransmissionSystem.Network
                 this.networkStream = this.tcpClient.GetStream();
 
                 this.isConnected = true;
-                Console.WriteLine("[NetworkClient] Connected successfully.");
+                this.logger.LogInfo("[NetworkClient] Connected successfully.");
                 return true;
             }
             catch (SocketException ex)
             {
-                Console.WriteLine($"[NetworkClient] ERROR: Connection failed - {ex.Message}");
+                this.logger.LogError($"[NetworkClient] ERROR: Connection failed - {ex.Message}");
                 this.isConnected = false;
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[NetworkClient] ERROR: Unexpected error during connection - {ex.Message}");
+                this.logger.LogError($"[NetworkClient] ERROR: Unexpected error during connection - {ex.Message}");
                 this.isConnected = false;
                 return false;
             }
@@ -106,7 +111,7 @@ namespace AircraftTransmissionSystem.Network
         {
             if (this.isConnected)
             {
-                Console.WriteLine("[NetworkClient] Disconnecting from Ground Terminal...");
+                this.logger.LogInfo("[NetworkClient] Disconnecting from Ground Terminal...");
 
                 try
                 {
@@ -127,11 +132,11 @@ namespace AircraftTransmissionSystem.Network
                     }
 
                     this.isConnected = false;
-                    Console.WriteLine("[NetworkClient] Disconnected.");
+                    this.logger.LogInfo("[NetworkClient] Disconnected.");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[NetworkClient] WARNING: Error during disconnect - {ex.Message}");
+                    this.logger.LogWarning($"[NetworkClient] WARNING: Error during disconnect - {ex.Message}");
                     this.isConnected = false;
                 }
             }
@@ -163,7 +168,7 @@ namespace AircraftTransmissionSystem.Network
             // Check connection status
             if (!this.isConnected || this.networkStream == null)
             {
-                Console.WriteLine("[NetworkClient] ERROR: Not connected. Cannot send data.");
+                this.logger.LogError("[NetworkClient] ERROR: Not connected. Cannot send data.");
                 return false;
             }
 
@@ -175,18 +180,18 @@ namespace AircraftTransmissionSystem.Network
                 // Send data over network stream
                 this.networkStream.Write(dataBytes, 0, dataBytes.Length);
 
-                Console.WriteLine($"[NetworkClient] SENT [SEQ:{sequenceNumber}]: {data}");
+                this.logger.LogInfo($"[NetworkClient] SENT [SEQ:{sequenceNumber}]: {data}");
                 return true;
             }
             catch (IOException ex)
             {
-                Console.WriteLine($"[NetworkClient] ERROR: Failed to send data - {ex.Message}");
+                this.logger.LogError($"[NetworkClient] ERROR: Failed to send data - {ex.Message}");
                 this.isConnected = false;
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[NetworkClient] ERROR: Unexpected error during send - {ex.Message}");
+                this.logger.LogError($"[NetworkClient] ERROR: Unexpected error during send - {ex.Message}");
                 return false;
             }
         }
