@@ -288,6 +288,10 @@ namespace GroundTerminalSystem
             this.dtEnd.Location = new System.Drawing.Point(sx + 280, sy + 40);
             this.dtEnd.Width = 150;
 
+            //search button
+            this.btnSearch.Text = "Search";
+            this.btnSearch.Location = new System.Drawing.Point(sx + 460, sy + 20);
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
         }
 
         #endregion

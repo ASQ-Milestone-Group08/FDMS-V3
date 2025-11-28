@@ -204,7 +204,42 @@ namespace GroundTerminalSystem
         }//end InsertTelemetry
 
 
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            var tail = txtSearchTail.Text.Trim();
+            DateTime s = dtStart.Value.Date;
+            DateTime end = dtEnd.Value.Date.AddDays(1).AddSeconds(-1);
+
+            using var con = new SqliteConnection($"Data Source={dbPath}");
+            con.Open();
+
+            string q = @"
+            SELECT * FROM Telemetry
+            WHERE Tail=$t AND Stored BETWEEN $s AND $e
+            ORDER BY Stored;";
+
+            using var cmd = new SqliteCommand(q, con);
+            cmd.Parameters.AddWithValue("$t", tail);
+            cmd.Parameters.AddWithValue("$s", s.ToString("o"));
+            cmd.Parameters.AddWithValue("$e", end.ToString("o"));
+
+            using var r = cmd.ExecuteReader();
+
+            dgvG.Rows.Clear();
+            dgvAlt.Rows.Clear();
+
+            while (r.Read())
+            {
+                dgvG.Rows.Add(
+                    r["TS"], r["AccX"], r["AccY"], r["AccZ"], r["Weight"], r["Stored"]
+                );
+
+                dgvAlt.Rows.Add(
+                    r["TS"], r["Alt"], r["Pitch"], r["Bank"], r["Weight"], r["Stored"]
+                );
+            }
+        }//end btnSearch_Click
+
+
     }//END class
-
-
 }//END namespace
