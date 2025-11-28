@@ -1,4 +1,4 @@
-namespace AircraftTransmissionSystem
+namespace AircraftTransmissionSystem.Telemetry
 {
     /// <summary>
     /// Enum Name: Aircraft
