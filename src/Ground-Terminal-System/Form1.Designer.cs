@@ -214,6 +214,21 @@ namespace GroundTerminalSystem
             this.chartGforce.Series.Add(sNx);
             this.chartGforce.Series.Add(sNy);
             this.chartGforce.Series.Add(sNz);
+
+            //altitude chart panel
+            this.chartAltitude.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            var altArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("AltArea");
+            this.chartAltitude.ChartAreas.Add(altArea);
+
+            var sAlt = new System.Windows.Forms.DataVisualization.Charting.Series("Altitude");
+            sAlt.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            this.chartAltitude.Series.Add(sAlt);
+
+            //add chart panels to monitoring tab
+            this.panelCharts.Controls.Add(this.chartAltitude);
+            this.panelCharts.Controls.Add(this.chartGforce);
+
         }
 
         #endregion
