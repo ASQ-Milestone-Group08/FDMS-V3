@@ -2,7 +2,7 @@
  * File Name    : Logger.cs
  * Description  : This logger class is designed to log system events and errors
  *               in both console and a file.
- *               It has three log levels: Info, Error, and Warning.
+ *               It has three log levels: INFO, WARNING, and ERROR .
  * Author       : Chris Park
  * Last Modified: November 28, 2025
  */
@@ -17,8 +17,9 @@ namespace AircraftTransmissionSystem.Logging
     /// </summary>
     public class Logger : ILogger
     {
+        private enum LogLevel { INFO, WARNING, ERROR };
         private readonly string logFilePath;
-        private readonly object lockObject = new object();
+        private readonly object lockObject = new();
 
         /// <summary>
         /// Function Name: Logger (Constructor)
@@ -60,7 +61,7 @@ namespace AircraftTransmissionSystem.Logging
         /// <param name="message">The informational message to log.</param>
         public void LogInfo(string message)
         {
-            WriteLog("INFO", message);
+            WriteLog(LogLevel.INFO, message);
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace AircraftTransmissionSystem.Logging
         /// <param name="message">The error message to log.</param>
         public void LogError(string message)
         {
-            WriteLog("ERROR", message);
+            WriteLog(LogLevel.ERROR, message);
         }
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace AircraftTransmissionSystem.Logging
         /// <param name="message">The warning message to log.</param>
         public void LogWarning(string message)
         {
-            WriteLog("WARNING", message);
+            WriteLog(LogLevel.WARNING, message);
         }
 
         /// <summary>
@@ -96,13 +97,13 @@ namespace AircraftTransmissionSystem.Logging
         /// Description: Internal helper method to write log messages to file.
         ///              Thread-safe using lock to prevent concurrent write conflicts.
         /// Parameters:
-        ///   - level (string): The log level (INFO, ERROR, WARNING)
+        ///   - level (LogLevel): The log level (INFO, WARNING, ERROR)
         ///   - message (string): The message to log
         /// Return Type: void
         /// </summary>
         /// <param name="level">The log level.</param>
         /// <param name="message">The message to log.</param>
-        private void WriteLog(string level, string message)
+        private void WriteLog(LogLevel level, string message)
         {
             lock (this.lockObject)
             {

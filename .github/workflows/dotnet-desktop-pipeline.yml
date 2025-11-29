@@ -108,7 +108,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
-        ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"ASQ-Milestone-Group08_FDMS-V3" /o:"asq-milestone-group08" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"ASQ-Milestone-Group08_FDMS-V3" /o:"asq-milestone-group08" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" /d:sonar.sources="src" /d:sonar.tests="tests"
 
     # Restore dependencies - added by Chris
     - name: Restore dependencies
@@ -120,7 +120,7 @@ jobs:
       
     # Run all tests (Unit + Integration) - added by Chris
     - name: Run All Tests
-      run: dotnet test $env:Solution_Name --configuration ${{ matrix.configuration }} --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+      run: dotnet test $env:Solution_Name --configuration ${{ matrix.configuration }} --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
       env:
         ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
       continue-on-error: false
