@@ -94,8 +94,10 @@ namespace GroundTerminalSystem
                 return;
             }
 
-            _searchController.ExecuteSearch(parameters);
+            List<TelemetryData> newData = _searchController.ExecuteSearch(parameters);
+            UpdateSearchResults(newData);
         }
+
 
         private void btnExport_Click(object sender, EventArgs e)
         {
@@ -228,6 +230,24 @@ namespace GroundTerminalSystem
             }
             chartAltitude.Invalidate();
             chartGforce.Invalidate();
+        }
+
+        private void UpdateSearchResults(List<TelemetryData> data)
+        {
+            dgvG.ClearSelection();
+            dgvAlt.ClearSelection();
+            foreach (TelemetryData t in data)
+            {
+                dgvG.Rows.Add(t.TimeOfRecording,
+                    t.AccelX, t.AccelY, t.AccelZ,
+                    t.Weight, t.TimeReceived);
+                dgvAlt.Rows.Add(t.TimeOfRecording,
+                    t.Altitude, t.Pitch, t.Bank,
+                    t.Weight, t.TimeReceived);
+            }
+
+            dgvG.Refresh();
+            dgvAlt.Refresh();
         }
 
         private void Log(string message)

@@ -84,10 +84,8 @@ namespace GroundTerminalSystem
         {
             List<TelemetryData> results = ExecuteSearch(criteria);
 
-            string newFile = criteria.TailNumber + "_" + criteria.StartTime + "_" + criteria.EndTime;
-            File.Create(newFile);
-
-            using (StreamWriter writer = new StreamWriter(newFile))
+            string newFile = criteria.TailNumber;
+            using (StreamWriter writer = new StreamWriter(newFile + ".txt"))
             {
                 foreach (TelemetryData temp in results)
                 {
@@ -96,7 +94,7 @@ namespace GroundTerminalSystem
                         temp.Weight.ToString("F6") + ", " + temp.Altitude.ToString("F6") + ", " +
                         temp.Pitch.ToString("F6") + ", " + temp.Bank.ToString("F6");
 
-                    writer.Write(newString);
+                    writer.WriteLine(newString);
                 }
             }
         }
