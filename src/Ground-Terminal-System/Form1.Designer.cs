@@ -346,13 +346,13 @@ namespace GroundTerminalSystem
             this.btnSearch.Text = "Search";
             this.btnSearch.Location = new System.Drawing.Point(sx + 500, sy + 20);
             this.btnSearch.Height = 50;
-            //this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
 
             //export button
             this.btnExport.Text = "Export";
             this.btnExport.Location = new System.Drawing.Point(20, 550);
             this.btnExport.Height = 50;
-            //this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
 
 
             //control layout in search mode

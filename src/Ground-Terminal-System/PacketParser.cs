@@ -54,7 +54,6 @@ namespace GroundTerminalSystem
                 result = new TelemetryData
                 {
                     TailNumber = tailNumber,
-                    Sequence = sequence,
                     TimeOfRecording = DateTime.ParseExact(values[0], "M_d_yyyy H:mm:s", null)
 ,
                     TimeReceived = DateTime.Now,
@@ -67,8 +66,6 @@ namespace GroundTerminalSystem
                     Altitude = attitude.Altitude,
                     Pitch = attitude.Pitch,
                     Bank = attitude.Bank,
-
-                    Checksum = receivedChecksum
                 };
 
                 // Validate checksum according to APPENDIX C

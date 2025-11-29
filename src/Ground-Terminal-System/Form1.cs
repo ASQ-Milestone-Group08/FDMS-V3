@@ -1,3 +1,4 @@
+
 /*
  * Filename		: Form1.cs
  * Project		: Ground-Terminal-System
@@ -6,7 +7,7 @@
  * Description	: This is the main form for the Ground Terminal System application.
  */
 
-
+using GroundTerminalSystem.Models;
 using System;
 using System.Configuration;
 using System.Drawing;
@@ -21,6 +22,7 @@ namespace GroundTerminalSystem
         private NetworkListener _listener;
         private PacketParser _parser = new PacketParser();
         private DatabaseManager _db;
+        private SearchController _searchController;
         private DateTime _lastUIUpdate = DateTime.MinValue;
 
 
@@ -30,6 +32,7 @@ namespace GroundTerminalSystem
             UpdateRealTimeStatus();
 
             _db = new DatabaseManager(ConfigurationManager.ConnectionStrings["FDMS_DB"].ConnectionString);
+            _searchController = new SearchController(ConfigurationManager.ConnectionStrings["FDMS_DB"].ConnectionString);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -111,6 +114,31 @@ namespace GroundTerminalSystem
 
 
 
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            SearchCriteria? parameters = UpdateSearchParameters();
+            if (parameters == null)
+            {
+                return;
+            }
+
+            List<TelemetryData> newData = _searchController.ExecuteSearch(parameters);
+            UpdateSearchResults(newData);
+        }
+
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            SearchCriteria? parameters = UpdateSearchParameters();
+            if (parameters == null)
+            {
+                return;
+            }
+
+            _searchController.ExportToFile(parameters);
+        }
+
+
         private void OnPacketReceived(string packet)
         {
             Log($"Received: {packet}");
@@ -182,6 +210,21 @@ namespace GroundTerminalSystem
         }
 
 
+        private SearchCriteria? UpdateSearchParameters()
+        {
+            if (this.txtSearchTail.Text == String.Empty ||
+                this.dtStart.Text == String.Empty ||
+                this.dtEnd.Text == String.Empty)
+            {
+                return null;
+            }
+
+            SearchCriteria search = new SearchCriteria(txtSearchTail.Text, dtStart.Value, dtEnd.Value);
+
+            return search;
+        }
+
+
         private void UpdateRealTimeDisplay(TelemetryData t)
         {
             // INFO LABELS
@@ -215,6 +258,24 @@ namespace GroundTerminalSystem
             }
             chartAltitude.Invalidate();
             chartGforce.Invalidate();
+        }
+
+        private void UpdateSearchResults(List<TelemetryData> data)
+        {
+            dgvG.ClearSelection();
+            dgvAlt.ClearSelection();
+            foreach (TelemetryData t in data)
+            {
+                dgvG.Rows.Add(t.TimeOfRecording,
+                    t.AccelX, t.AccelY, t.AccelZ,
+                    t.Weight, t.TimeReceived);
+                dgvAlt.Rows.Add(t.TimeOfRecording,
+                    t.Altitude, t.Pitch, t.Bank,
+                    t.Weight, t.TimeReceived);
+            }
+
+            dgvG.Refresh();
+            dgvAlt.Refresh();
         }
 
         private void Log(string message)
