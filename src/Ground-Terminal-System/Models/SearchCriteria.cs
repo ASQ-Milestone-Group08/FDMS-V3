@@ -8,9 +8,9 @@ namespace GroundTerminalSystem.Models
 {
     public class SearchCriteria
     {
-        private string TailNumber { get; }
-        private DateTime StartTime { get; }
-        private DateTime EndTime { get; }
+        public string TailNumber { get; }
+        public DateTime StartTime { get; }
+        public DateTime EndTime { get; }
 
         public SearchCriteria(string tailNumber, DateTime startTime, DateTime endTime)
         {

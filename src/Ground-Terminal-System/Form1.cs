@@ -87,7 +87,6 @@ namespace GroundTerminalSystem
         {
             Log($"Received: {packet}");
 
-            // Parse on background thread as well (cheap, but keeps things clean)
             Task.Run(() =>
             {
                 if (_parser.TryParse(packet, out TelemetryData data))
@@ -118,7 +117,7 @@ namespace GroundTerminalSystem
                             {
                                 try
                                 {
-                                    // ignore toggleRT for now, just to verify UI
+                                    // ignoring it for now
                                     // if (toggleRT.Checked)
                                     UpdateRealTimeDisplay(data);
                                 }
@@ -141,6 +140,7 @@ namespace GroundTerminalSystem
                     string tail = packet.Split('|')[0];
                     try
                     {
+                        //ignoring for now
                         //_db.StoreInvalidPacket(packet, tail);
                     }
                     catch (Exception ex)
