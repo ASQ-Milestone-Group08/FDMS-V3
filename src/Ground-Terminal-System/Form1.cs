@@ -1,67 +1,52 @@
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+using System.Configuration;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-
-
 
 namespace GroundTerminalSystem
 {
-    //TELEMETRY CLASS
-    public class Telemetry
-    {
-        public string Tail { get; set; }
-        public DateTime Time { get; set; }
-        public double AccX { get; set; }
-        public double AccY { get; set; }
-        public double AccZ { get; set; }
-        public double Weight { get; set; }
-        public double Altitude { get; set; }
-        public double Pitch { get; set; }
-        public double Bank { get; set; }
-    }//end Telemetry class
-
-
-
     public partial class Form1 : Form
     {
-        private CancellationTokenSource simSource;
-        private readonly string connectionString =
-            "Server=fdms-server.database.windows.net; Database=FDMS_DB; User Id=FDMS-Admin; Password=VeryStrongPW##++;";
+        private NetworkListener _listener;
+        private PacketParser _parser = new PacketParser();
+        private DatabaseManager _db;
+        private DateTime _lastUIUpdate = DateTime.MinValue;
+
 
         public Form1()
         {
             InitializeComponent();
             UpdateRealTimeStatus();
+
+            _db = new DatabaseManager(ConfigurationManager.ConnectionStrings["FDMS_DB"].ConnectionString);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (panelLeft.Width < 50)
-            {
-                panelLeft.Width = 350;
-            }
-            // Avoid 0-height errors
-            int h = this.ClientSize.Height - this.panelTop.Height;
+            if (chartGforce.Series.IndexOf("Nx") < 0)
+                chartGforce.Series.Add("Nx");
+            if (chartGforce.Series.IndexOf("Ny") < 0)
+                chartGforce.Series.Add("Ny");
+            if (chartGforce.Series.IndexOf("Nz") < 0)
+                chartGforce.Series.Add("Nz");
 
-            chartGforce.Height = (int)(h * 0.60);
-            chartAltitude.Height = (int)(h * 0.40);
+            chartGforce.Series["Nx"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            chartGforce.Series["Ny"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            chartGforce.Series["Nz"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+            if (chartAltitude.Series.IndexOf("Altitude") < 0)
+                chartAltitude.Series.Add("Altitude");
+
+            chartAltitude.Series["Altitude"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
         }
 
-        //REAL-TIME 
+
         private void toggleRealTime(object sender, EventArgs e)
         {
             UpdateRealTimeStatus();
-        }//end toggleRealTime
+        }
 
         private void UpdateRealTimeStatus()
         {
@@ -75,287 +60,162 @@ namespace GroundTerminalSystem
                 lblRealTimeStatus.Text = "OFF";
                 lblRealTimeStatus.ForeColor = Color.Red;
             }
-        }//end UpdateRealTimeStatus
+        }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            simSource = new CancellationTokenSource();
-            StartSim(simSource.Token);
+            _listener = new NetworkListener();
+            _listener.InitializePort("127.0.0.1", 5000);
+            _listener.PacketReceived += OnPacketReceived;
+            _listener.Start();
 
             btnStart.Enabled = false;
             btnStop.Enabled = true;
-        }//end btnStart_Click
+            Log("Listening started...");
+        }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            simSource?.Cancel();
+            _listener?.SendDisconnect();
             btnStart.Enabled = true;
             btnStop.Enabled = false;
-        }//end btnStop_Click
+            Log("Listener stopped.");
+        }
 
-        private async void StartSim(CancellationToken token)
+
+        private void OnPacketReceived(string packet)
         {
-            Random rnd = new Random();
-            double alt = 5000;
+            Log($"Received: {packet}");
 
-            while (!token.IsCancellationRequested)
+            Task.Run(() =>
             {
-                var pkt = new Telemetry
+                if (_parser.TryParse(packet, out TelemetryData data))
                 {
-                    Tail = "AC123",
-                    Time = DateTime.Now,
-                    AccX = rnd.NextDouble(),
-                    AccY = rnd.NextDouble(),
-                    AccZ = rnd.NextDouble(),
-                    Weight = 2150 + rnd.NextDouble(),
-                    Altitude = alt,
-                    Pitch = Math.Round((rnd.NextDouble() - 0.5) * 0.05, 6),
-                    Bank = Math.Round((rnd.NextDouble() - 0.5) * 0.02, 6)
-                };
+                    try
+                    {
+                        // DB writes OFF UI / network thread
+                        _db.StoreAltitudeData(data);
+                        _db.StoreGForceData(data);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"DB error: {ex.Message}");
+                    }
 
-                alt += rnd.Next(200, 600);
+                    // Throttle UI update and always use BeginInvoke
+                    var now = DateTime.Now;
+                    if (now - _lastUIUpdate > TimeSpan.FromMilliseconds(300))
+                    {
+                        _lastUIUpdate = now;
 
-                int checksum = ComputeChecksum(pkt);
+                        if (!IsHandleCreated || IsDisposed)
+                            return;
 
-                // Process packet
-                ProcessTelemetry(pkt, checksum);
+                        try
+                        {
+                            BeginInvoke(new Action(() =>
+                            {
+                                try
+                                {
+                                    // ignoring it for now
+                                    // if (toggleRT.Checked)
+                                    UpdateRealTimeDisplay(data);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log($"UI update error: {ex.Message}");
+                                }
+                            }));
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            // form closed while packet still arriving
+                        }
+                    }
 
-                await Task.Delay(1000);
-            }
+                    Log("✔ Valid packet processed");
+                }
+                else
+                {
+                    string tail = packet.Split('|')[0];
+                    try
+                    {
+                        //ignoring for now
+                        //_db.StoreInvalidPacket(packet, tail);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"DB invalid insert error: {ex.Message}");
+                    }
 
-        }//end StartSim
+                    Log("Invalid checksum stored");
+                }
+            });
+        }
 
-        private int ComputeChecksum(Telemetry t)
+
+        private void UpdateRealTimeDisplay(TelemetryData t)
         {
-            return (int)((t.Altitude + t.Pitch + t.Bank) / 3.0);
-        }//end ComputeChecksum
-
-        private void ProcessTelemetry(Telemetry t, int checksumFromPacket)
-        {
-            int localCs = ComputeChecksum(t);
-            if (localCs != checksumFromPacket)
-            {
-                return;
-            }
-
-            InsertTelemetry(t);
-
-            if (toggleRT.Checked)
-            {
-                this.Invoke(new Action(() => UpdateRealTimeUI(t)));
-            }
-        }//end ProcessTelemetry
-
-
-        private void UpdateRealTimeUI(Telemetry t)
-        {
-            //textboxes
-            lblTailValue.Text = t.Tail;
-            lblTimestampValue.Text = t.Time.ToString("HH:mm:ss");
+            // INFO LABELS
+            lblTailValue.Text = t.TailNumber;
+            lblTimestampValue.Text = t.TimeOfRecording.ToString("M_d_yyyy H:mm:s");
             lblAltitudeValue.Text = t.Altitude.ToString("F0");
             lblWeightValue.Text = t.Weight.ToString("F2");
             lblPitchValue.Text = t.Pitch.ToString("F4");
             lblBankValue.Text = t.Bank.ToString("F4");
 
-            //charts
-            //altitude chart limit to last 40 points
-            chartAltitude.Series[0].Points.AddY(t.Altitude);
-            if (chartAltitude.Series[0].Points.Count > 40)
+            // make sure series exist 
+            if (chartAltitude.Series.Count > 0)
             {
-                chartAltitude.Series[0].Points.RemoveAt(0);
+                chartAltitude.Series[0].Points.AddY(t.Altitude);
+                if (chartAltitude.Series[0].Points.Count > 40)
+                    chartAltitude.Series[0].Points.RemoveAt(0);
             }
 
-            chartGforce.Series["Nx"].Points.AddY(t.AccX);
-            chartGforce.Series["Ny"].Points.AddY(t.AccY);
-            chartGforce.Series["Nz"].Points.AddY(t.AccZ);
-
-            //g-force chart limit to last 40 points
-            if (chartGforce.Series["Nx"].Points.Count > 40)
+            if (chartGforce.Series.IndexOf("Nx") >= 0)
             {
-                chartGforce.Series["Nx"].Points.RemoveAt(0);
-                chartGforce.Series["Ny"].Points.RemoveAt(0);
-                chartGforce.Series["Nz"].Points.RemoveAt(0);
-            }
-        }//end UpdateRealTimeUI
+                chartGforce.Series["Nx"].Points.AddY(t.AccelX);
+                chartGforce.Series["Ny"].Points.AddY(t.AccelY);
+                chartGforce.Series["Nz"].Points.AddY(t.AccelZ);
 
-        private void InitializeDatabase()
+                if (chartGforce.Series["Nx"].Points.Count > 40)
+                {
+                    chartGforce.Series["Nx"].Points.RemoveAt(0);
+                    chartGforce.Series["Ny"].Points.RemoveAt(0);
+                    chartGforce.Series["Nz"].Points.RemoveAt(0);
+                }
+            }
+            chartAltitude.Invalidate();
+            chartGforce.Invalidate();
+        }
+
+        private void Log(string message)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                if (!txtDebug.IsHandleCreated || txtDebug.IsDisposed)
+                    return;
+
+                if (txtDebug.InvokeRequired)
                 {
-                    conn.Open();
+                    txtDebug.BeginInvoke(new Action(() => AppendLog(message)));
+                }
+                else
+                {
+                    AppendLog(message);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show("Database connection failed:\n" + ex.Message);
+                // ignore logging errors
             }
         }
 
 
-        private void InsertTelemetry(Telemetry t)
+        private void AppendLog(string message)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
+            txtDebug.AppendText($"{DateTime.Now:HH:mm:ss}  {message}{Environment.NewLine}");
+        }
 
-                // Insert into AltitudeData table
-                string sqlAlt = @"
-                INSERT INTO AltitudeData
-                    (AircraftTailNumber, TimeOfRecording, TimeReceived, Altitude, Pitch, Bank)
-                VALUES
-                    (@tail, @tRec, @tRecv, @alt, @pitch, @bank);";
-
-                using (SqlCommand cmd = new SqlCommand(sqlAlt, conn))
-                {
-                    cmd.Parameters.AddWithValue("@tail", t.Tail);
-                    cmd.Parameters.AddWithValue("@tRec", t.Time);
-                    cmd.Parameters.AddWithValue("@tRecv", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@alt", t.Altitude);
-                    cmd.Parameters.AddWithValue("@pitch", t.Pitch);
-                    cmd.Parameters.AddWithValue("@bank", t.Bank);
-                    cmd.ExecuteNonQuery();
-                }
-
-                // Insert into GForceData table
-                string sqlG = @"
-                INSERT INTO GForceData
-                    (AircraftTailNumber, TimeOfRecording, TimeReceived, AccelerationX, AccelerationY, AccelerationZ, Weight)
-                VALUES
-                    (@tail, @tRec, @tRecv, @x, @y, @z, @w);";
-
-                using (SqlCommand cmd2 = new SqlCommand(sqlG, conn))
-                {
-                    cmd2.Parameters.AddWithValue("@tail", t.Tail);
-                    cmd2.Parameters.AddWithValue("@tRec", t.Time);
-                    cmd2.Parameters.AddWithValue("@tRecv", DateTime.Now);
-                    cmd2.Parameters.AddWithValue("@x", t.AccX);
-                    cmd2.Parameters.AddWithValue("@y", t.AccY);
-                    cmd2.Parameters.AddWithValue("@z", t.AccZ);
-                    cmd2.Parameters.AddWithValue("@w", t.Weight);
-                    cmd2.ExecuteNonQuery();
-                }
-            }
-        }//end InsertTelemetry
-
-
-
-        private void btnSearch_Click(object sender, EventArgs e)
-        {
-            string tail = txtSearchTail.Text.Trim();
-            DateTime start = dtStart.Value.Date;
-            DateTime end = dtEnd.Value.Date.AddDays(1).AddSeconds(-1);
-
-            if (tail == "")
-            {
-                MessageBox.Show("Please enter a tail number.");
-                return;
-            }
-
-            dgvG.Rows.Clear();
-            dgvAlt.Rows.Clear();
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-
-                //altitude search
-                string sqlAlt = @"
-                SELECT TimeOfRecording, Altitude, Pitch, Bank, 0 AS Weight, TimeReceived
-                FROM AltitudeData
-                WHERE AircraftTailNumber = @tail
-                AND TimeOfRecording BETWEEN @start AND @end
-                ORDER BY TimeOfRecording ASC;";
-
-                using (SqlCommand cmdAlt = new SqlCommand(sqlAlt, conn))
-                {
-                    cmdAlt.Parameters.AddWithValue("@tail", tail);
-                    cmdAlt.Parameters.AddWithValue("@start", start);
-                    cmdAlt.Parameters.AddWithValue("@end", end);
-
-                    using (SqlDataReader r = cmdAlt.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            dgvAlt.Rows.Add(
-                                r["TimeOfRecording"],
-                                r["Altitude"],
-                                r["Pitch"],
-                                r["Bank"],
-                                r["Weight"], 
-                                r["TimeReceived"]
-                            );
-                        }
-                    }
-                }
-
-                //g-force search
-                string sqlG = @"
-                SELECT TimeOfRecording, AccelerationX, AccelerationY, AccelerationZ, Weight, TimeReceived
-                FROM GForceData
-                WHERE AircraftTailNumber = @tail
-                AND TimeOfRecording BETWEEN @start AND @end
-                ORDER BY TimeOfRecording ASC;";
-
-                using (SqlCommand cmdG = new SqlCommand(sqlG, conn))
-                {
-                    cmdG.Parameters.AddWithValue("@tail", tail);
-                    cmdG.Parameters.AddWithValue("@start", start);
-                    cmdG.Parameters.AddWithValue("@end", end);
-
-                    using (SqlDataReader r = cmdG.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            dgvG.Rows.Add(
-                                r["TimeOfRecording"],
-                                r["AccelerationX"],
-                                r["AccelerationY"],
-                                r["AccelerationZ"],
-                                r["Weight"],
-                                r["TimeReceived"]
-                            );
-                        }
-                    }
-                }
-            }//end using SqlConnection
-        }//end btnSearch_Click
-
-
-
-        private void btnExport_Click(object sender, EventArgs e)
-        {
-            if (dgvAlt.Rows.Count == 0)
-            {
-                MessageBox.Show("No results to export.");
-                return;
-            }
-
-            SaveFileDialog s = new SaveFileDialog
-            {
-                Filter = "Text File|*.txt"
-            };
-            if (s.ShowDialog() != DialogResult.OK)
-                return;
-
-            StringBuilder sb = new StringBuilder();
-
-            foreach (DataGridViewRow row in dgvAlt.Rows)
-            {
-                sb.AppendLine(string.Join(",",
-                    row.Cells[0].Value,
-                    row.Cells[1].Value,
-                    row.Cells[2].Value,
-                    row.Cells[3].Value,
-                    row.Cells[4].Value,
-                    row.Cells[5].Value));
-            }
-
-            File.WriteAllText(s.FileName, sb.ToString());
-            MessageBox.Show("Export complete.");
-        }//end btnExport_Click
-
-
-    }//END class
-}//END namespace
+    }
+}
