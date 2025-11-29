@@ -10,25 +10,32 @@ using System.Data.SqlClient;
 
 namespace GroundTerminalSystem
 {
-    static internal class SearchController
+    internal class SearchController
     {
+
+        private readonly string connectionString;
+
+        public SearchController(string connString)
+        {
+            connectionString = connString;
+        }
+
 
         /// <summary>
         /// Searches the database for records using the aircraft tail number, start and end date.
         /// Returns a list of all telemetry records.
         /// </summary>
-        /// <param name="conn">Database connection</param>
         /// <param name="criteria">Search Criteria object</param>
         /// <returns>List of telemetry data</returns>
-        static public List<Telemetry> ExecuteSearch(SqlConnection conn, SearchCriteria criteria)
+        public List<TelemetryData> ExecuteSearch(SearchCriteria criteria)
         {
-            List<Telemetry> results = new();
+            List<TelemetryData> results = new();
 
-            try
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
 
-                string commandText = "SELECT AltitudeData.TimeOfRecording, " +
+                string commandText = "SELECT AltitudeData.TimeOfRecording, AltitudeData.TimeReceived," +
                                             "AccelerationX, AccelerationY, AccelerationZ, Weight, " +
                                             "Altitude, Pitch, Bank " +
                                         "FROM AltitudeData INNER JOIN GForceData " +
@@ -46,29 +53,23 @@ namespace GroundTerminalSystem
                 {
                     while (reader.Read())
                     {
-                        Telemetry temp = new();
-                        temp.Tail = criteria.TailNumber;
-                        temp.Time = (DateTime)reader["TimeOfRecording"];
-                        temp.AccX = (double)reader["AccelerationX"];
-                        temp.AccY = (double)reader["AccelerationY"];
-                        temp.AccZ = (double)reader["AccelerationZ"];
-                        temp.Weight = (double)reader["Weight"];
-                        temp.Altitude = (double)reader["Altitude"];
-                        temp.Pitch = (double)reader["Pitch"];
-                        temp.Bank = (double)reader["Bank"];
+                        TelemetryData temp = new TelemetryData
+                        {
+                            TailNumber = criteria.TailNumber,
+                            TimeOfRecording = (DateTime)reader["TimeOfRecording"],
+                            TimeReceived = (DateTime)reader["TimeReceived"],
+                            AccelX = (double)reader["AccelerationX"],
+                            AccelY = (double)reader["AccelerationY"],
+                            AccelZ = (double)reader["AccelerationZ"],
+                            Weight = (double)reader["Weight"],
+                            Altitude = (double)reader["Altitude"],
+                            Pitch = (double)reader["Pitch"],
+                            Bank = (double)reader["Bank"]
+                        };
 
                         results.Add(temp);
                     }
                 }
-
-            }
-            catch (SqlException ex)
-            {
-                // Log errors
-            }
-            finally
-            {
-                conn.Close();
             }
 
             return results;
@@ -78,21 +79,20 @@ namespace GroundTerminalSystem
         /// <summary>
         /// Retreives data from the database and writes then to a new text file.
         /// </summary>
-        /// <param name="conn">Database connection</param>
         /// <param name="criteria">Search Criteria object</param>
-        static public void ExportToFile(SqlConnection conn, SearchCriteria criteria)
+        public void ExportToFile(SearchCriteria criteria)
         {
-            List<Telemetry> results = ExecuteSearch(conn, criteria);
+            List<TelemetryData> results = ExecuteSearch(criteria);
 
             string newFile = criteria.TailNumber + "_" + criteria.StartTime + "_" + criteria.EndTime;
             File.Create(newFile);
 
             using (StreamWriter writer = new StreamWriter(newFile))
             {
-                foreach (Telemetry temp in results)
+                foreach (TelemetryData temp in results)
                 {
-                    string newString = temp.Time.ToString() + ", " + temp.AccX.ToString("F6") + ", " +
-                        temp.AccY.ToString("F6") + ", " + temp.AccZ.ToString("F6") + ", " +
+                    string newString = temp.TimeReceived.ToString() + ", " + temp.AccelX.ToString("F6") + ", " +
+                        temp.AccelY.ToString("F6") + ", " + temp.AccelZ.ToString("F6") + ", " +
                         temp.Weight.ToString("F6") + ", " + temp.Altitude.ToString("F6") + ", " +
                         temp.Pitch.ToString("F6") + ", " + temp.Bank.ToString("F6");
 
