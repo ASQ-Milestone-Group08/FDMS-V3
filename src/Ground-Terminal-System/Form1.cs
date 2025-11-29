@@ -1,9 +1,19 @@
+
+/*
+ * Filename		: Form1.cs
+ * Project		: Ground-Terminal-System
+ * By			: Erin Garcia
+ * Date 		: 2025-11-28
+ * Description	: This is the main form for the Ground Terminal System application.
+ */
+
 using GroundTerminalSystem.Models;
 using System;
 using System.Configuration;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace GroundTerminalSystem
 {
@@ -46,6 +56,11 @@ namespace GroundTerminalSystem
         }
 
 
+        /* Function		: void toggleRealTime()
+         * Description	: This function toggles the real-time data display on or off based on the checkbox state.
+         * Parameter	: object sender, EventArgs e
+         * Returns		: NONE
+         */
         private void toggleRealTime(object sender, EventArgs e)
         {
             UpdateRealTimeStatus();
@@ -65,6 +80,12 @@ namespace GroundTerminalSystem
             }
         }
 
+
+        /* Function		: void btnStart_Click()
+         * Description	: This function starts the network listener when the Start button is clicked.
+         * Parameter	: object sender, EventArgs e
+         * Returns		: NONE
+         */
         private void btnStart_Click(object sender, EventArgs e)
         {
             _listener = new NetworkListener();
@@ -75,15 +96,22 @@ namespace GroundTerminalSystem
             btnStart.Enabled = false;
             btnStop.Enabled = true;
             Log("Listening started...");
-        }
+        }//end btnStart_Click()
 
+
+        /* Function		: void btnStop_Click()
+         * Description	: This function stops the network listener when the Stop button is clicked.
+         * Parameter	: object sender, EventArgs e
+         * Returns		: NONE
+         */
         private void btnStop_Click(object sender, EventArgs e)
         {
             _listener?.SendDisconnect();
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             Log("Listener stopped.");
-        }
+        }//end btnStop_Click()
+
 
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -278,5 +306,5 @@ namespace GroundTerminalSystem
             txtDebug.AppendText($"{DateTime.Now:HH:mm:ss}  {message}{Environment.NewLine}");
         }
 
-    }
-}
+    }//end class
+}//end namespace

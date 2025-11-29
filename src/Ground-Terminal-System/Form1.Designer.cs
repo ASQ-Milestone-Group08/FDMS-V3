@@ -1,3 +1,12 @@
+/*
+ * Filename		: Form1.Designer.cs
+ * Project		: Ground-Terminal-System
+ * By			: Erin Garcia
+ * Date 		: 2025-11-28
+ * Description	: This is the designer partial class for the main form of the Ground Terminal System application.
+ */
+
+
 namespace GroundTerminalSystem
 {
     partial class Form1
@@ -443,5 +452,5 @@ namespace GroundTerminalSystem
         //debug
         private System.Windows.Forms.TextBox txtDebug;
 
-    }
-}
+    }//end partial class
+}//end namespace
