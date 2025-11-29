@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace GroundTerminalSystem
             InitializeComponent();
             UpdateRealTimeStatus();
 
-            _db = new DatabaseManager("Server=tcp:fdms-server.database.windows.net,1433;Initial Catalog=FDMS_DB;Persist Security Info=False;User ID=FDMS-Admin;Password=VeryStrongPW##++;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            _db = new DatabaseManager(ConfigurationManager.ConnectionStrings["FDMS_DB"].ConnectionString);
         }
 
         private void Form1_Load(object sender, EventArgs e)
