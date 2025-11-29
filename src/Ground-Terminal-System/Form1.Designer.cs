@@ -232,15 +232,15 @@ namespace GroundTerminalSystem
             });
 
             // DEBUG LOG WINDOW
-            this.txtDebug = new System.Windows.Forms.TextBox();
-            this.txtDebug.Multiline = true;
-            this.txtDebug.ScrollBars = ScrollBars.Vertical;
-            this.txtDebug.Dock = DockStyle.Bottom;
-            this.txtDebug.Height = 120;
-            this.txtDebug.Font = new Font("Consolas", 9F, FontStyle.Regular);
-            this.txtDebug.BackColor = Color.Black;
-            this.txtDebug.ForeColor = Color.Lime;
-            this.txtDebug.ReadOnly = true;
+            //this.txtDebug = new System.Windows.Forms.TextBox();
+            //this.txtDebug.Multiline = true;
+            //this.txtDebug.ScrollBars = ScrollBars.Vertical;
+            //this.txtDebug.Dock = DockStyle.Bottom;
+            //this.txtDebug.Height = 120;
+            //this.txtDebug.Font = new Font("Consolas", 9F, FontStyle.Regular);
+            //this.txtDebug.BackColor = Color.Black;
+            //this.txtDebug.ForeColor = Color.Lime;
+            //this.txtDebug.ReadOnly = true;
 
             // Add debug box to monitoring tab
             this.tabMonitoring.Controls.Add(this.txtDebug);
