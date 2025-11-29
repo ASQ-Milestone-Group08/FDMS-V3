@@ -1,3 +1,4 @@
+using GroundTerminalSystem.Models;
 using System;
 using System.Configuration;
 using System.Drawing;
@@ -11,6 +12,7 @@ namespace GroundTerminalSystem
         private NetworkListener _listener;
         private PacketParser _parser = new PacketParser();
         private DatabaseManager _db;
+        private SearchController _searchController;
         private DateTime _lastUIUpdate = DateTime.MinValue;
 
 
@@ -20,6 +22,7 @@ namespace GroundTerminalSystem
             UpdateRealTimeStatus();
 
             _db = new DatabaseManager(ConfigurationManager.ConnectionStrings["FDMS_DB"].ConnectionString);
+            _searchController = new SearchController(ConfigurationManager.ConnectionStrings["FDMS_DB"].ConnectionString);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -80,6 +83,29 @@ namespace GroundTerminalSystem
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             Log("Listener stopped.");
+        }
+
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            SearchCriteria? parameters = UpdateSearchParameters();
+            if (parameters == null)
+            {
+                return;
+            }
+
+            _searchController.ExecuteSearch(parameters);
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            SearchCriteria? parameters = UpdateSearchParameters();
+            if (parameters == null)
+            {
+                return;
+            }
+
+            _searchController.ExportToFile(parameters);
         }
 
 
@@ -151,6 +177,21 @@ namespace GroundTerminalSystem
                     Log("Invalid checksum stored");
                 }
             });
+        }
+
+
+        private SearchCriteria? UpdateSearchParameters()
+        {
+            if (this.txtSearchTail.Text == String.Empty ||
+                this.dtStart.Text == String.Empty ||
+                this.dtEnd.Text == String.Empty)
+            {
+                return null;
+            }
+
+            SearchCriteria search = new SearchCriteria(txtSearchTail.Text, dtStart.Value, dtEnd.Value);
+
+            return search;
         }
 
 
