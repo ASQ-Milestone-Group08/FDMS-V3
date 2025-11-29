@@ -1,3 +1,9 @@
+/*
+ * File Name    : PacketParser.cs
+ * Description  : This is the class for parsing incoming data packets from aircraft.
+ * Author       : Andrei Haboc
+ * Last Modified: November 28, 2025
+ */
 using System;
 
 namespace GroundTerminalSystem
@@ -5,6 +11,8 @@ namespace GroundTerminalSystem
     public class PacketParser
     {
         private readonly ChecksumValidator _validator = new ChecksumValidator();
+        public int LastExpectedChecksum { get; private set; }
+        public int LastCalculatedChecksum { get; private set; }
 
         public bool TryParse(string packet, out TelemetryData result)
         {
@@ -41,12 +49,14 @@ namespace GroundTerminalSystem
                 var gForce = ExtractGForce(values);
                 var attitude = ExtractAttitude(values);
 
+
                 // Build telemetry data object
                 result = new TelemetryData
                 {
                     TailNumber = tailNumber,
                     Sequence = sequence,
-                    TimeOfRecording = values[0],
+                    TimeOfRecording = DateTime.ParseExact(values[0], "M_d_yyyy H:mm:s", null)
+,
                     TimeReceived = DateTime.Now,
 
                     AccelX = gForce.AccelX,

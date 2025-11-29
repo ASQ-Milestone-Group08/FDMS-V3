@@ -1,3 +1,9 @@
+/*
+ * File Name    : DatabaseManager.cs
+ * Description  : This is the class for managing database operations for storing telemetry data.
+ * Author       : Andrei Haboc
+ * Last Modified: November 28, 2025
+ */
 using System;
 using System.Data.SqlClient;
 
@@ -57,23 +63,26 @@ namespace GroundTerminalSystem
             cmd.ExecuteNonQuery();
         }
 
-        // Store invalid raw packet (no parsing)
-        public void StoreInvalidPacket(string rawPacket, string tailNumber)
+        public void StoreInvalidPacket(string packet, int expectedChecksum, int calculatedChecksum)
         {
             using SqlConnection conn = new SqlConnection(_connectionString);
             conn.Open();
 
             string query = @"
-                INSERT INTO PacketErrorData
-                (AircraftTailNumber, TimeReceived, PacketData)
-                VALUES (@TailNumber, @TimeReceived, @PacketData);";
+        INSERT INTO PacketErrorData
+        (TimeReceived, PacketData, ExpectedCheckSum, CalculatedCheckSum)
+        VALUES (@TimeReceived, @PacketData, @Expected, @Calculated);";
 
             using SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@TailNumber", tailNumber);
             cmd.Parameters.AddWithValue("@TimeReceived", DateTime.Now);
-            cmd.Parameters.AddWithValue("@PacketData", rawPacket);
+            cmd.Parameters.AddWithValue("@PacketData", packet);
+            cmd.Parameters.AddWithValue("@Expected", expectedChecksum);
+            cmd.Parameters.AddWithValue("@Calculated", calculatedChecksum);
 
             cmd.ExecuteNonQuery();
         }
+
+
+
     }
 }

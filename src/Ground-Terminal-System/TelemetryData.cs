@@ -5,7 +5,7 @@ namespace GroundTerminalSystem
         public required string TailNumber { get; set; }
         public int Sequence { get; set; }
 
-        public string? TimeOfRecording { get; set; }
+        public DateTime TimeOfRecording { get; set; }
         public DateTime TimeReceived { get; set; }
 
         public double AccelX { get; set; }

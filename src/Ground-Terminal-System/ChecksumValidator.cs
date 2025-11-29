@@ -1,3 +1,9 @@
+/*
+ * File Name    : ChecksumValidator.cs
+ * Description  : This is the class for validating checksums of incoming telemetry data packets.
+ * Author       : Andrei Haboc
+ * Last Modified: November 28, 2025
+ */
 namespace GroundTerminalSystem
 {
     public class ChecksumValidator

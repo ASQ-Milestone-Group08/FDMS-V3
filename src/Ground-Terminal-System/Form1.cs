@@ -18,22 +18,30 @@ namespace GroundTerminalSystem
             InitializeComponent();
             UpdateRealTimeStatus();
 
-            _db = new DatabaseManager("Server=(localdb)\\MSSQLLocalDB;Database=FDMS;Trusted_Connection=True;");
+            _db = new DatabaseManager("Server=tcp:fdms-server.database.windows.net,1433;Initial Catalog=FDMS_DB;Persist Security Info=False;User ID=FDMS-Admin;Password=VeryStrongPW##++;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (panelLeft.Width < 50)
-                panelLeft.Width = 350;
+            if (chartGforce.Series.IndexOf("Nx") < 0)
+                chartGforce.Series.Add("Nx");
+            if (chartGforce.Series.IndexOf("Ny") < 0)
+                chartGforce.Series.Add("Ny");
+            if (chartGforce.Series.IndexOf("Nz") < 0)
+                chartGforce.Series.Add("Nz");
 
-            int h = this.ClientSize.Height - this.panelTop.Height;
-            chartGforce.Height = (int)(h * 0.60);
-            chartAltitude.Height = (int)(h * 0.40);
+            chartGforce.Series["Nx"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            chartGforce.Series["Ny"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            chartGforce.Series["Nz"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+            if (chartAltitude.Series.IndexOf("Altitude") < 0)
+                chartAltitude.Series.Add("Altitude");
+
+            chartAltitude.Series["Altitude"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
         }
 
-        //--------------------------------------
-        // REAL-TIME UI TOGGLE
-        //--------------------------------------
+
         private void toggleRealTime(object sender, EventArgs e)
         {
             UpdateRealTimeStatus();
@@ -53,9 +61,6 @@ namespace GroundTerminalSystem
             }
         }
 
-        //--------------------------------------
-        // START/STOP LISTENER
-        //--------------------------------------
         private void btnStart_Click(object sender, EventArgs e)
         {
             _listener = new NetworkListener();
@@ -76,96 +81,83 @@ namespace GroundTerminalSystem
             Log("Listener stopped.");
         }
 
-        //--------------------------------------
-        // RECEIVE PACKET CALLBACK
-        //--------------------------------------
+
         private void OnPacketReceived(string packet)
         {
-            // This method is called on a background thread from NetworkListener
             Log($"Received: {packet}");
 
-            TelemetryData data;
-            if (!_parser.TryParse(packet, out data))
+            // Parse on background thread as well (cheap, but keeps things clean)
+            Task.Run(() =>
             {
-                // invalid: store in error table (on background task)
-                var tail = packet.Split('|')[0];
-
-                Task.Run(() =>
+                if (_parser.TryParse(packet, out TelemetryData data))
                 {
                     try
                     {
-                        _db.StoreInvalidPacket(packet, tail);
+                        // DB writes OFF UI / network thread
+                        _db.StoreAltitudeData(data);
+                        _db.StoreGForceData(data);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"DB error: {ex.Message}");
+                    }
+
+                    // Throttle UI update and always use BeginInvoke
+                    var now = DateTime.Now;
+                    if (now - _lastUIUpdate > TimeSpan.FromMilliseconds(300))
+                    {
+                        _lastUIUpdate = now;
+
+                        if (!IsHandleCreated || IsDisposed)
+                            return;
+
+                        try
+                        {
+                            BeginInvoke(new Action(() =>
+                            {
+                                try
+                                {
+                                    // ignore toggleRT for now, just to verify UI
+                                    // if (toggleRT.Checked)
+                                    UpdateRealTimeDisplay(data);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log($"UI update error: {ex.Message}");
+                                }
+                            }));
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            // form closed while packet still arriving
+                        }
+                    }
+
+                    Log("✔ Valid packet processed");
+                }
+                else
+                {
+                    string tail = packet.Split('|')[0];
+                    try
+                    {
+                        //_db.StoreInvalidPacket(packet, tail);
                     }
                     catch (Exception ex)
                     {
                         Log($"DB invalid insert error: {ex.Message}");
                     }
-                });
 
-                Log("Invalid checksum stored");
-                return;
-            }
-
-            // Valid packet – store in DB on a background worker (so listener thread stays light)
-            Task.Run(() =>
-            {
-                try
-                {
-                    _db.StoreAltitudeData(data);
-                    _db.StoreGForceData(data);
-                }
-                catch (Exception ex)
-                {
-                    Log($"DB valid insert error: {ex.Message}");
+                    Log("Invalid checksum stored");
                 }
             });
-
-            // (only every 300ms) 
-            if (!this.IsHandleCreated || this.IsDisposed)
-                return;
-
-            var now = DateTime.Now;
-            if (now - _lastUIUpdate > TimeSpan.FromMilliseconds(300))
-            {
-                _lastUIUpdate = now;
-
-                try
-                {
-                    this.BeginInvoke(new Action(() =>
-                    {
-                        try
-                        {  
-                            if (toggleRT.Checked)
-                            {
-                                UpdateRealTimeDisplay(data);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log($"UI update error: {ex.Message}");
-                        }
-                    }));
-                }
-                catch (ObjectDisposedException)
-                {
-                    // form closed while packets still arriving → just ignore
-                }
-            }
-
-            Log("Valid packet processed");
         }
 
 
-
-
-        //--------------------------------------
-        // UPDATE LIVE UI DISPLAY
-        //--------------------------------------
         private void UpdateRealTimeDisplay(TelemetryData t)
         {
             // INFO LABELS
             lblTailValue.Text = t.TailNumber;
-            lblTimestampValue.Text = t.TimeOfRecording;
+            lblTimestampValue.Text = t.TimeOfRecording.ToString("M_d_yyyy H:mm:s");
             lblAltitudeValue.Text = t.Altitude.ToString("F0");
             lblWeightValue.Text = t.Weight.ToString("F2");
             lblPitchValue.Text = t.Pitch.ToString("F4");
@@ -192,11 +184,10 @@ namespace GroundTerminalSystem
                     chartGforce.Series["Nz"].Points.RemoveAt(0);
                 }
             }
+            chartAltitude.Invalidate();
+            chartGforce.Invalidate();
         }
 
-        //--------------------------------------
-        // LOGGING UTIL
-        //--------------------------------------
         private void Log(string message)
         {
             try
