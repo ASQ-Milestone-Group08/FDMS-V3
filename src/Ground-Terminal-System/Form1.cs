@@ -189,7 +189,7 @@ namespace GroundTerminalSystem
                         }
                     }
 
-                    Log("✔ Valid packet processed");
+                    Log("Valid packet processed");
                 }
                 else
                 {
